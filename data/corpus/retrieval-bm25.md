@@ -1,0 +1,2 @@
+# Retrieval note: exact symbols and BM25
+Ticket RET-106. Query includes `ContextWindowExceededError` and exact stack-frame function name. BM25 can preserve rare identifier tokens and error strings that dense embeddings may paraphrase away. Hybrid retrieval combines sparse and dense rankings, followed by reranking. Character-gram overlap is lexical, not dense neural semantic search. Evaluate hit@k, recall@k, MRR on gold document IDs before looking at generated answer scores.

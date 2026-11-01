@@ -1,0 +1,2 @@
+# Agent Runtime failure: repeated tool calls
+Ticket AGT-105. The assistant repeatedly calls `search_docs` using the same input and never reaches a final answer. Runtime must set MAX_STEPS and deduplicate exact tool signatures. Persist state at tool boundaries. Instrument each iteration with trace_id, tool name, arguments, result, latency, and stop reason. Agent planning is model-driven only if model chooses next action; a deterministic loop is a workflow or rule-based reference controller.

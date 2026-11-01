@@ -1,0 +1,23 @@
+{"id": "q001", "query": "QueuePool limit size 5 overflow 10 reached", "category": "exact", "answerable": true, "gold_docs": ["connection-pool.md"]}
+{"id": "q002", "query": "SQLAlchemy sessions not closed after exceptions", "category": "paraphrase", "answerable": true, "gold_docs": ["connection-pool.md"]}
+{"id": "q003", "query": "async def time.sleep blocks all other requests", "category": "exact", "answerable": true, "gold_docs": ["async-deadlock.md"]}
+{"id": "q004", "query": "asyncio event loop latency caused by blocking call", "category": "paraphrase", "answerable": true, "gold_docs": ["async-deadlock.md"]}
+{"id": "q005", "query": "KV cache memory max_num_seqs", "category": "exact", "answerable": true, "gold_docs": ["oom-kv-cache.md"]}
+{"id": "q006", "query": "inference cuda memory goes up for many active conversations", "category": "paraphrase", "answerable": true, "gold_docs": ["oom-kv-cache.md"]}
+{"id": "q007", "query": "MCP search_docs top_k timeout", "category": "exact", "answerable": true, "gold_docs": ["mcp-tool-timeout.md"]}
+{"id": "q008", "query": "tools keep retrying the same search and use all the budget", "category": "paraphrase", "answerable": true, "gold_docs": ["agent-loop.md"]}
+{"id": "q009", "query": "ContextWindowExceededError BM25 identifier token", "category": "exact", "answerable": true, "gold_docs": ["retrieval-bm25.md"]}
+{"id": "q010", "query": "groundedness unsupported fluent answer", "category": "exact", "answerable": true, "gold_docs": ["rag-grounding.md"]}
+{"id": "q011", "query": "API_KEY leaked by external instruction", "category": "security", "answerable": true, "gold_docs": ["prompt-injection.md"]}
+{"id": "q012", "query": "crash before saving tool result and duplicate write", "category": "recovery", "answerable": true, "gold_docs": ["checkpoint-replay.md"]}
+{"id": "q013", "query": "RRF sum 1/(k+rank)", "category": "exact", "answerable": true, "gold_docs": ["rank-fusion.md"]}
+{"id": "q014", "query": "max_output_tokens equals max_model_len", "category": "exact", "answerable": true, "gold_docs": ["context-budget.md"]}
+{"id": "q015", "query": "permission denied should we retry", "category": "recovery", "answerable": true, "gold_docs": ["retry-policy.md"]}
+{"id": "q016", "query": "idempotency keys for mutations after crash", "category": "recovery", "answerable": true, "gold_docs": ["checkpoint-replay.md"]}
+{"id": "q017", "query": "read-only allowlisted tools attack example", "category": "security", "answerable": true, "gold_docs": ["prompt-injection.md"]}
+{"id": "q018", "query": "BM25 precise stack frame names", "category": "exact", "answerable": true, "gold_docs": ["retrieval-bm25.md"]}
+{"id": "q019", "query": "gold_docs is empty for unknown question", "category": "unanswerable-policy", "answerable": true, "gold_docs": ["rag-grounding.md"]}
+{"id": "q020", "query": "output token budget and tool schemas", "category": "paraphrase", "answerable": true, "gold_docs": ["context-budget.md"]}
+{"id": "q021", "query": "What is the CEO annual salary in 2033?", "category": "unanswerable", "answerable": false, "gold_docs": []}
+{"id": "q022", "query": "How many employees work at unknown fictional department OMEGA?", "category": "unanswerable", "answerable": false, "gold_docs": []}
+{"id": "q023", "query": "Exact warranty policy for quantum purple router MX-999?", "category": "unanswerable", "answerable": false, "gold_docs": []}

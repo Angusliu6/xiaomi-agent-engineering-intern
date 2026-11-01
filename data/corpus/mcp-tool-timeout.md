@@ -1,0 +1,2 @@
+# Incident note: MCP search tool timeout
+Ticket AGT-104. MCP tool `search_docs` occasionally exceeds client timeout on a large repository. Tool schema: `query` nonempty string; `top_k` integer 1 to 20. Observed failure mode: retry loop repeats the same query until budget exhausted. Mitigation: bounded retries with exponential backoff on transient errors, checkpoint task state, and record idempotency before retrying any side-effecting action. Stdio server restart alone does not guarantee exactly-once tool execution.

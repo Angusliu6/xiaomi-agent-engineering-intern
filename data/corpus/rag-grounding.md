@@ -1,0 +1,2 @@
+# Retrieval note: unsupported answer
+Ticket RET-107. Search returns an unrelated deployment guide when asked about a feature that is absent from the documentation. A fluent answer is not supported evidence. Groundedness means claims can be traced to retrieved sources; answer accuracy must be separately evaluated. For unknown policy the system should abstain, not invent details. Beware unanswerable tasks in benchmark: gold_docs is empty by design.

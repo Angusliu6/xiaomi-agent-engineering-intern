@@ -1,0 +1,2 @@
+# Incident note: asyncio event loop blocked
+Ticket ENG-102. Endpoint stalls under concurrent load. Trace has `time.sleep(3)` inside `async def handle_request`. Blocking sleep stalls the single event loop. Fix: replace with `await asyncio.sleep(3)` when delay is appropriate; offload synchronous blocking I/O to bounded worker threads. Verification: event loop latency p95 reduced on an internal development replay. No validated numerical claims are published in this synthetic note.

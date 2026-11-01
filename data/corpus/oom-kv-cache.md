@@ -1,0 +1,2 @@
+# Incident note: KV cache and context growth
+Ticket INF-103. LLM inference server throws CUDA out of memory during long multi-turn sessions. Root cause: max_model_len and max_num_seqs were configured beyond GPU memory budget. Attention KV cache grows with active tokens, sequence concurrency, and model dimensions. Candidate actions: reduce concurrent sequences, cap context, use KV cache monitoring. Do not infer that training OOM and inference KV-cache OOM have identical causes.

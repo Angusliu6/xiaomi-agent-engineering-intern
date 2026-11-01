@@ -1,0 +1,2 @@
+# Incident note: checkpoint recovery and idempotency
+Ticket AGT-109. A process crashes after a tool call executes but before the result is saved. On recovery, repeating the call is safe for an idempotent read-only search, but may duplicate writes or payments. Store tool-intent and completion markers, use idempotency keys for mutations, and apply human confirmation to high-impact actions. SQLite checkpoint transaction is atomic but does not make external tools exactly-once.

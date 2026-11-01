@@ -1,0 +1,2 @@
+# Incident note: connection pool starvation
+Ticket ENG-101. A Python service using SQLAlchemy reaches QueuePool timeout during traffic bursts. Symptom: `QueuePool limit of size 5 overflow 10 reached`. The root cause was connection sessions not being closed on an exception path. Investigation: check pool checkout/checkin counts and connection lifecycle. Fix: session context manager and finally cleanup. An increased pool size masked the leak and was rolled back. Verification: 500 requests, no monotonic increase in checked-out connections.

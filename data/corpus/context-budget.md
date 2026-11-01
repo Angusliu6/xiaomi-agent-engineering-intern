@@ -1,0 +1,2 @@
+# Inference note: max output tokens and context budget
+Ticket INF-111. ContextWindowExceededError occurs when prompt tokens and maximum generation tokens exceed the configured context allowance. Budget must account for system instruction, tool schemas, conversation history and expected tool outputs. If max_output_tokens equals max_model_len, the first call may already violate the budget. Adjusting only temperature cannot solve this context-limit error.

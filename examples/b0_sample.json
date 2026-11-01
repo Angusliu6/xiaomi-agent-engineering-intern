@@ -1,0 +1,458 @@
+{
+  "variant": "b0",
+  "count": 23,
+  "scope": "retrieval_only",
+  "metrics": {
+    "hit_at_5_answerable": 0.95,
+    "mrr_answerable": 0.95,
+    "recall_at_5_answerable": 0.95,
+    "correct_abstention_unanswerable": 0,
+    "mean_calls": 1,
+    "mean_latency_ms": 0.0226
+  },
+  "rows": [
+    {
+      "id": "q001",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "connection-pool.md"
+      ],
+      "retrieved": [
+        "connection-pool.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.041
+    },
+    {
+      "id": "q002",
+      "category": "paraphrase",
+      "answerable": true,
+      "gold_docs": [
+        "connection-pool.md"
+      ],
+      "retrieved": [
+        "connection-pool.md",
+        "checkpoint-replay.md",
+        "retry-policy.md",
+        "rank-fusion.md",
+        "rag-grounding.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.026
+    },
+    {
+      "id": "q003",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "async-deadlock.md"
+      ],
+      "retrieved": [
+        "async-deadlock.md",
+        "prompt-injection.md",
+        "connection-pool.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.033
+    },
+    {
+      "id": "q004",
+      "category": "paraphrase",
+      "answerable": true,
+      "gold_docs": [
+        "async-deadlock.md"
+      ],
+      "retrieved": [
+        "async-deadlock.md",
+        "agent-loop.md",
+        "checkpoint-replay.md",
+        "context-budget.md",
+        "rag-grounding.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.023
+    },
+    {
+      "id": "q005",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "oom-kv-cache.md"
+      ],
+      "retrieved": [
+        "oom-kv-cache.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.012
+    },
+    {
+      "id": "q006",
+      "category": "paraphrase",
+      "answerable": true,
+      "gold_docs": [
+        "oom-kv-cache.md"
+      ],
+      "retrieved": [
+        "oom-kv-cache.md",
+        "context-budget.md",
+        "checkpoint-replay.md",
+        "retry-policy.md",
+        "rank-fusion.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.021
+    },
+    {
+      "id": "q007",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "mcp-tool-timeout.md"
+      ],
+      "retrieved": [
+        "mcp-tool-timeout.md",
+        "agent-loop.md",
+        "connection-pool.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.013
+    },
+    {
+      "id": "q008",
+      "category": "paraphrase",
+      "answerable": true,
+      "gold_docs": [
+        "agent-loop.md"
+      ],
+      "retrieved": [
+        "mcp-tool-timeout.md",
+        "checkpoint-replay.md",
+        "prompt-injection.md",
+        "context-budget.md",
+        "oom-kv-cache.md"
+      ],
+      "hit_at_5": false,
+      "reciprocal_rank": 0.0,
+      "recall_at_5": 0.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.029
+    },
+    {
+      "id": "q009",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "retrieval-bm25.md"
+      ],
+      "retrieved": [
+        "retrieval-bm25.md",
+        "context-budget.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.024
+    },
+    {
+      "id": "q010",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "rag-grounding.md"
+      ],
+      "retrieved": [
+        "rag-grounding.md",
+        "retrieval-bm25.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.035
+    },
+    {
+      "id": "q011",
+      "category": "security",
+      "answerable": true,
+      "gold_docs": [
+        "prompt-injection.md"
+      ],
+      "retrieved": [
+        "prompt-injection.md",
+        "checkpoint-replay.md",
+        "context-budget.md",
+        "rag-grounding.md",
+        "retrieval-bm25.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.016
+    },
+    {
+      "id": "q012",
+      "category": "recovery",
+      "answerable": true,
+      "gold_docs": [
+        "checkpoint-replay.md"
+      ],
+      "retrieved": [
+        "checkpoint-replay.md",
+        "agent-loop.md",
+        "mcp-tool-timeout.md",
+        "rank-fusion.md",
+        "retrieval-bm25.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.024
+    },
+    {
+      "id": "q013",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "rank-fusion.md"
+      ],
+      "retrieved": [
+        "rank-fusion.md",
+        "retrieval-bm25.md",
+        "mcp-tool-timeout.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.016
+    },
+    {
+      "id": "q014",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "context-budget.md"
+      ],
+      "retrieved": [
+        "context-budget.md",
+        "oom-kv-cache.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.028
+    },
+    {
+      "id": "q015",
+      "category": "recovery",
+      "answerable": true,
+      "gold_docs": [
+        "retry-policy.md"
+      ],
+      "retrieved": [
+        "retry-policy.md",
+        "rag-grounding.md",
+        "mcp-tool-timeout.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.014
+    },
+    {
+      "id": "q016",
+      "category": "recovery",
+      "answerable": true,
+      "gold_docs": [
+        "checkpoint-replay.md"
+      ],
+      "retrieved": [
+        "checkpoint-replay.md",
+        "mcp-tool-timeout.md",
+        "context-budget.md",
+        "retry-policy.md",
+        "rank-fusion.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.018
+    },
+    {
+      "id": "q017",
+      "category": "security",
+      "answerable": true,
+      "gold_docs": [
+        "prompt-injection.md"
+      ],
+      "retrieved": [
+        "prompt-injection.md",
+        "checkpoint-replay.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.013
+    },
+    {
+      "id": "q018",
+      "category": "exact",
+      "answerable": true,
+      "gold_docs": [
+        "retrieval-bm25.md"
+      ],
+      "retrieved": [
+        "retrieval-bm25.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.01
+    },
+    {
+      "id": "q019",
+      "category": "unanswerable-policy",
+      "answerable": true,
+      "gold_docs": [
+        "rag-grounding.md"
+      ],
+      "retrieved": [
+        "rag-grounding.md",
+        "rank-fusion.md",
+        "checkpoint-replay.md",
+        "retry-policy.md",
+        "context-budget.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.045
+    },
+    {
+      "id": "q020",
+      "category": "paraphrase",
+      "answerable": true,
+      "gold_docs": [
+        "context-budget.md"
+      ],
+      "retrieved": [
+        "context-budget.md",
+        "mcp-tool-timeout.md",
+        "agent-loop.md",
+        "retry-policy.md",
+        "checkpoint-replay.md"
+      ],
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "recall_at_5": 1.0,
+      "correct_abstention": null,
+      "calls": 1,
+      "latency_ms": 0.02
+    },
+    {
+      "id": "q021",
+      "category": "unanswerable",
+      "answerable": false,
+      "gold_docs": [],
+      "retrieved": [
+        "rag-grounding.md",
+        "retry-policy.md",
+        "async-deadlock.md",
+        "prompt-injection.md",
+        "connection-pool.md"
+      ],
+      "hit_at_5": false,
+      "reciprocal_rank": 0.0,
+      "recall_at_5": null,
+      "correct_abstention": false,
+      "calls": 1,
+      "latency_ms": 0.023
+    },
+    {
+      "id": "q022",
+      "category": "unanswerable",
+      "answerable": false,
+      "gold_docs": [],
+      "retrieved": [
+        "rag-grounding.md",
+        "retrieval-bm25.md",
+        "agent-loop.md"
+      ],
+      "hit_at_5": false,
+      "reciprocal_rank": 0.0,
+      "recall_at_5": null,
+      "correct_abstention": false,
+      "calls": 1,
+      "latency_ms": 0.017
+    },
+    {
+      "id": "q023",
+      "category": "unanswerable",
+      "answerable": false,
+      "gold_docs": [],
+      "retrieved": [
+        "rag-grounding.md",
+        "retrieval-bm25.md",
+        "agent-loop.md",
+        "checkpoint-replay.md",
+        "context-budget.md"
+      ],
+      "hit_at_5": false,
+      "reciprocal_rank": 0.0,
+      "recall_at_5": null,
+      "correct_abstention": false,
+      "calls": 1,
+      "latency_ms": 0.019
+    }
+  ]
+}

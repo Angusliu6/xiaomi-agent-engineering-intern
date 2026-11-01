@@ -1,0 +1,2 @@
+# Reliability note: retry classification
+Ticket AGT-112. Distinguish transient transport timeouts, invalid tool parameters, missing permissions, and deterministic schema failures. Retry transient failures with backoff and a maximum attempts cap; reject invalid tool arguments early; do not retry permission denial. Record the original error, tool arguments, and eventual decision in a structured trace. Retry is not a substitute for diagnosis.

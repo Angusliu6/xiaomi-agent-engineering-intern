@@ -1,0 +1,2 @@
+# Retrieval note: Reciprocal Rank Fusion
+Ticket RET-110. RRF combines multiple result lists using score `sum(1/(k+rank))`. It is rank fusion, not score normalization and not a neural embedding. If lexical rankings are highly correlated, improvements may be modest. Measure paired per-question improvements and regressions. A baseline with the same corpus, cutoff and question set is essential for attribution.
