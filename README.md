@@ -97,6 +97,16 @@ Command examples in `examples/` are outputs from the **synthetic fixture** in th
 4. **Engineering writing** — a research protocol, runbooks, honest evidence ledger and interview notes.
 5. **Post-training** — companion theory-and-experiment plan, intentionally *not* presented as completed model training.
 
+## Active research milestones (GitHub Issues)
+
+- [S1 · Public benchmark & frozen holdout](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/issues/1)
+- [S2 · Dense retrieval & reranker](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/issues/2)
+- [S3 · Model-driven evidence-aware search](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/issues/3) **← primary research direction**
+- [S4 · MCP & crash recovery](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/issues/4)
+- [S5 · Independent research report & interview](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/issues/5)
+
+These are **open tasks**, not features reported as completed.
+
 ## First things to improve
 
 1. Replace the synthetic notes with a **licensed/public** held-out engineering corpus; freeze an independent test set.
