@@ -75,6 +75,8 @@ User query ──> Bounded Runtime ──> Planner (offline rules / optional LLM
 | `docs/OPERATIONS.md` | setup, commands, troubleshooting, limitations and security |
 | `docs/INTERVIEW_GUIDE.md` | 2-minute demo, truthful resume bullets and difficult cross-examination |
 | `docs/BASELINE_REPORT.md` | real local fixture results, paired gains/regressions and research limitations |
+| `docs/VERIFICATION.md` | checked local runs and explicit unverified features / next gates |
+| `examples/run_demo.sh` / `run_demo.ps1` | Linux/macOS and Windows one-command demo recipes |
 | `integrations/mcp_server.py` | optional MCP SDK v2 example (dependency not included in core, no live interop test yet) |
 | `docs/HR_REVIEW.md` | skeptical hiring-manager review and hardening roadmap |
 | `docs/TRACE-QA-完整学习与项目说明书.pdf` | consolidated reader-friendly handbook (also available as separate download) |
