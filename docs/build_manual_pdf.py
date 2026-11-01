@@ -4,7 +4,7 @@ from html import escape
 import mistune
 from weasyprint import HTML
 root=Path(__file__).resolve().parents[1]
-order=[('LEARNING_PATH.md','01 学习路线与验收'),('KNOWLEDGE_MAP.md','02 知识图谱'),('COURSE_NOTES.md','03 课程资料与掌握深度'),('QUESTION_BANK.md','04 复习口试与实验'),('PROJECT_SPEC.md','05 项目技术实施'),('BASELINE_REPORT.md','06 首次实验报告'),('OPERATIONS.md','07 运行与调试'),('INTERVIEW_GUIDE.md','08 简历与面试'),('HR_REVIEW.md','09 HR 审查与下一步')]
+order=[('LEARNING_PATH.md','01 学习路线与验收'),('KNOWLEDGE_MAP.md','02 知识图谱'),('COURSE_NOTES.md','03 课程资料与掌握深度'),('QUESTION_BANK.md','04 复习口试与实验'),('SLIDE_EXERCISES.md','05 课件逐页问题映射'),('PROJECT_SPEC.md','06 项目技术实施'),('BASELINE_REPORT.md','07 首次实验报告'),('OPERATIONS.md','08 运行与调试'),('INTERVIEW_GUIDE.md','09 简历与面试'),('HR_REVIEW.md','10 HR 审查与下一步')]
 markdown=mistune.create_markdown(plugins=['table','strikethrough'])
 parts=[]
 for name,title in order:

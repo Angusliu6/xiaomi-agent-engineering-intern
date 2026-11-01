@@ -69,12 +69,15 @@ User query ──> Bounded Runtime ──> Planner (offline rules / optional LLM
 | `docs/KNOWLEDGE_MAP.md` | Knowledge graph and conceptual distinctions |
 | `docs/COURSE_NOTES.md` | All learning resources and targeted lesson checkpoints |
 | `docs/QUESTION_BANK.md` | Socratic interview questions + graded rubrics and experiments |
+| `docs/SLIDE_EXERCISES.md` | explicit PPT pages 01–29 ↔ review questions ↔ practical evidence |
+| `labs/LAB_01_*.md` – `LAB_06_*.md` | guided error-driven, hands-on assignments and acceptance criteria |
 | `docs/PROJECT_SPEC.md` | PRD, architecture, experiments, success criteria, data protocol |
 | `docs/OPERATIONS.md` | setup, commands, troubleshooting, limitations and security |
 | `docs/INTERVIEW_GUIDE.md` | 2-minute demo, truthful resume bullets and difficult cross-examination |
 | `docs/BASELINE_REPORT.md` | real local fixture results, paired gains/regressions and research limitations |
 | `integrations/mcp_server.py` | optional MCP SDK v2 example (dependency not included in core, no live interop test yet) |
 | `docs/HR_REVIEW.md` | skeptical hiring-manager review and hardening roadmap |
+| `docs/TRACE-QA-完整学习与项目说明书.pdf` | consolidated reader-friendly handbook (also available as separate download) |
 | `skills/incident-triage/SKILL.md` | Skill example and safety boundaries |
 | `slides/` | Slide source file and exported PPTX inside downloadable distribution |
 
