@@ -12,6 +12,7 @@ import json
 import sqlite3
 import time
 import uuid
+from contextlib import closing
 from typing import Protocol
 from .retrieval import Corpus, Hit, tokenize
 
@@ -53,16 +54,18 @@ class CheckpointStore:
     def __init__(self, db: Path):
         db.parent.mkdir(parents=True, exist_ok=True)
         self.db = db
-        with sqlite3.connect(db) as c:
+        with closing(sqlite3.connect(db)) as c:
             c.execute("CREATE TABLE IF NOT EXISTS checkpoints (run_id TEXT PRIMARY KEY, payload TEXT NOT NULL)")
+            c.commit()
 
     def save(self, state: State):
-        with sqlite3.connect(self.db) as c:
+        with closing(sqlite3.connect(self.db)) as c:
             c.execute("INSERT OR REPLACE INTO checkpoints VALUES (?, ?)",
                       (state.run_id, json.dumps(state.to_dict(), ensure_ascii=False)))
+            c.commit()
 
     def load(self, run_id: str) -> State:
-        with sqlite3.connect(self.db) as c:
+        with closing(sqlite3.connect(self.db)) as c:
             row = c.execute("SELECT payload FROM checkpoints WHERE run_id=?", (run_id,)).fetchone()
         if not row:
             raise KeyError(f"unknown run_id: {run_id}")
@@ -133,17 +136,24 @@ class Agent:
             return state
         start = time.perf_counter()
         docs = {d.id: d for d in self.tools.corpus.docs}
-        while state.step < state.budget:
-            q = self.planner.next_query(state)
-            if q is None:
-                break
-            if q in state.attempted:
-                break
-            state.attempted.append(q)
-            state.step += 1
-            state.events.append(Event(state.step, "tool_start", {"name": "search_docs", "query": q}))
+        # Recovery of a completed checkpoint is handled above. A crash after
+        # tool_start but before tool_result is replayed ONLY because search_docs
+        # is a read-only/idempotent operation. Never generalize to mutations.
+        pending = bool(state.events) and state.events[-1].kind == "tool_start"
+        while state.step < state.budget or pending:
+            if pending:
+                q = state.events[-1].payload["query"]
+                pending = False
+                state.events.append(Event(state.step, "tool_replay", {"query": q, "read_only": True}))
+            else:
+                q = self.planner.next_query(state)
+                if q is None or q in state.attempted:
+                    break
+                state.attempted.append(q)
+                state.step += 1
+                state.events.append(Event(state.step, "tool_start", {"name": "search_docs", "query": q}))
             if self.store:
-                self.store.save(state)  # write-ahead marker: external tools must be read-only/idempotent
+                self.store.save(state)  # durable intent; idempotent read-only replay
             try:
                 hits = self.tools.search_docs(q, 5, state.mode)
             except ToolError as exc:
@@ -155,12 +165,17 @@ class Agent:
             for hit in hits:
                 if hit.id not in state.retrieved:
                     state.retrieved.append(hit.id)
+            supported = [hit.id for hit in hits if self._basic_evidence_gate(state.query, hit.text)]
+            state.events.append(Event(state.step, "evidence_gate", {"supported_ids": supported,
+                "warning": "lexical heuristic, not claim-level grounding"}))
             if self.store:
                 self.store.save(state)
-            # Stop only after evidence is found. This is not an LLM quality assessor.
-            if hits:
+            # Weak lexical evidence gate: catches some accidental noise, but
+            # cannot establish factual entailment or answer correctness.
+            if supported:
+                state.citations = supported[:3]
                 break
-        state.citations = [d for d in state.retrieved if d in docs][:3]
+        state.citations = [d for d in state.citations if d in docs][:3]
         if state.citations:
             # Conservative extractive evidence: no model synthesis, no invented diagnosis.
             state.answer = "候选证据（尚需人工判断因果关系）：\n" + "\n".join(
@@ -174,6 +189,18 @@ class Agent:
         if self.store:
             self.store.save(state)
         return state
+
+    @staticmethod
+    def _basic_evidence_gate(query: str, text: str) -> bool:
+        stop = {"what", "when", "where", "the", "from", "does", "with", "have",
+                "about", "should", "could", "would", "after", "into", "your",
+                "this", "that", "were", "there", "which", "many", "some", "other"}
+        q = {t for t in tokenize(query) if len(t) >= 4 and t not in stop}
+        if not q:
+            return False
+        match = q & set(tokenize(text))
+        required = 1 if len(q) <= 2 else max(2, (len(q) + 2) // 3)
+        return len(match) >= required
 
     @staticmethod
     def _excerpt(text: str, query: str) -> str:

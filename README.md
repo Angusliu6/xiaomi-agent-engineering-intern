@@ -30,7 +30,7 @@ traceqa ask "Why does this search tool time out?" \
   --llm-url https://YOUR_APPROVED_ENDPOINT/v1 --model YOUR_MODEL
 ```
 
-Use only a trusted endpoint, and do not send private company documents. In the demo the model can **plan a search query only**; runtime does not give it a shell or a write-capable tool. The final answer is a short **extractive evidence preview**, not a generated causal diagnosis.
+Use only a trusted endpoint, and do not send private company documents. In the demo the model can **plan a search query only**; runtime does not give it a shell or a write-capable tool. The final answer is a short **extractive evidence preview** gated by a deliberately weak lexical overlap heuristic, not a generated causal diagnosis.
 
 ## Architecture
 
@@ -64,7 +64,7 @@ User query ──> Bounded Runtime ──> Planner (offline rules / optional LLM
 | `src/traceqa/evaluation.py` | Retrieval-only Hit@5, Recall@5, MRR, paired bootstrap |
 | `data/corpus/` | 12 authored synthetic incident notes; source text is **untrusted data** |
 | `data/benchmark.jsonl` | 23 handcrafted examples, 20 answerable + 3 deliberately unanswerable |
-| `tests/` | Automated validation and fault-injection tests |
+| `tests/` | Automated validation, crash-replay and fault-injection tests |
 | `docs/LEARNING_PATH.md` | Six-phase job-aligned curriculum + learning gates |
 | `docs/KNOWLEDGE_MAP.md` | Knowledge graph and conceptual distinctions |
 | `docs/COURSE_NOTES.md` | All learning resources and targeted lesson checkpoints |
@@ -72,13 +72,15 @@ User query ──> Bounded Runtime ──> Planner (offline rules / optional LLM
 | `docs/PROJECT_SPEC.md` | PRD, architecture, experiments, success criteria, data protocol |
 | `docs/OPERATIONS.md` | setup, commands, troubleshooting, limitations and security |
 | `docs/INTERVIEW_GUIDE.md` | 2-minute demo, truthful resume bullets and difficult cross-examination |
+| `docs/BASELINE_REPORT.md` | real local fixture results, paired gains/regressions and research limitations |
+| `integrations/mcp_server.py` | optional MCP SDK v2 example (dependency not included in core, no live interop test yet) |
 | `docs/HR_REVIEW.md` | skeptical hiring-manager review and hardening roadmap |
 | `skills/incident-triage/SKILL.md` | Skill example and safety boundaries |
 | `slides/` | Slide source file and exported PPTX inside downloadable distribution |
 
 ## Research baseline: what the current numbers mean
 
-Command examples in `examples/` are outputs from the **synthetic fixture** in this repository, not a benchmark on authentic industry incidents. The sample dataset is small and has authored answers, hence it is **not evidence of generalization**. The project deliberately logs both gains and regressions; observe whether confidence intervals include zero.
+Command examples in `examples/` are outputs from the **synthetic fixture** in this repository, not a benchmark on authentic industry incidents. The sample dataset is small and has authored answers, hence it is **not evidence of generalization**. The project deliberately logs both gains and regressions; observe whether confidence intervals include zero. The rule-controlled B2 now abstains on all three authored negative queries **in this fixture**, which is not proof of generalizable calibration.
 
 **No** text generation model quality has been measured. **No** live MCP interoperability test, distributed recovery test, retrieval abuse red-team, or real GitHub Issue benchmark has been completed. Those are explicit next milestones, not hidden claims.
 

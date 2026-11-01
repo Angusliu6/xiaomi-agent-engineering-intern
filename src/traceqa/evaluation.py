@@ -33,12 +33,14 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
             predicted = state.retrieved[:5]
             calls = state.step
             elapsed = state.elapsed_ms
+            abstained = state.status == "insufficient_evidence"
         else:
             import time
             begin = time.perf_counter()
             predicted = [h.id for h in corpus.search(c["query"], 5, mode)]
             elapsed = round((time.perf_counter() - begin) * 1000, 3)
             calls = 1
+            abstained = not predicted  # fixed-search baseline only; absence of hits is a crude abstention proxy
         gold = set(c["gold_docs"])
         first = next((i for i, doc in enumerate(predicted, 1) if doc in gold), 0)
         rows.append({"id": c["id"], "category": c.get("category", "general"),
@@ -46,7 +48,7 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
                      "retrieved": predicted, "hit_at_5": bool(first),
                      "reciprocal_rank": 1 / first if first else 0.,
                      "recall_at_5": len(set(predicted) & gold) / len(gold) if gold else None,
-                     "correct_abstention": not predicted if not gold else None,
+                     "correct_abstention": abstained if not gold else None,
                      "calls": calls, "latency_ms": elapsed})
     def mean(key, keep=lambda r: True):
         vals = [r[key] for r in rows if keep(r) and r[key] is not None]

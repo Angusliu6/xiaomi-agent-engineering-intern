@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from traceqa.retrieval import Corpus, Document, tokenize
-from traceqa.runtime import Agent, ReadOnlyTools, CheckpointStore, ToolError
+from traceqa.runtime import Agent, ReadOnlyTools, CheckpointStore, ToolError, State, Event
 from traceqa.evaluation import measure, paired_compare, load_cases
 from traceqa.llm import OpenAICompatiblePlanner
 
@@ -62,6 +62,19 @@ class TestRuntime(unittest.TestCase):
         s=Agent(ReadOnlyTools(self.corpus)).run('API_KEY leaked external instruction')
         self.assertTrue(s.citations)
         self.assertTrue(all(e.kind != 'shell_execution' for e in s.events))
+    def test_resume_interrupted_read_only_call(self):
+        with tempfile.TemporaryDirectory() as d:
+            store = CheckpointStore(Path(d)/'resume.db')
+            pending = State('replay-1', 'RRF fusion', 'hybrid', 3, step=1,
+                            attempted=['RRF fusion'],
+                            events=[Event(1,'tool_start',{'name':'search_docs','query':'RRF fusion'})])
+            store.save(pending)
+            recovered = Agent(ReadOnlyTools(self.corpus),store=store).run('RRF fusion',resume='replay-1')
+            self.assertEqual(recovered.status,'evidence_found')
+            self.assertTrue(any(e.kind=='tool_replay' for e in recovered.events))
+    def test_b2_abstains_on_synthetic_unknown(self):
+        s = Agent(ReadOnlyTools(self.corpus)).run('How many employees work at unknown fictional department OMEGA?')
+        self.assertEqual(s.status,'insufficient_evidence')
     def test_endpoint_security(self):
         with self.assertRaises(ValueError): OpenAICompatiblePlanner(base_url='http://arbitrary-host:8000/v1',model='test')
 

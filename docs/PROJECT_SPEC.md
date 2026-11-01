@@ -20,7 +20,7 @@ CLI/API → Agent Runtime (run_id, max_calls, state, checkpoint)
     → Reports (paired gains/regressions; champion-challenger decision)
 ```
 
-**重要区别**：本仓库 `Agent` 现阶段只在首次命中后停止，证据充分性尚是很弱的代理条件；B2 不是成熟的 multi-hop Agentic Search。`hybrid` 是两个 lexical 排名，不是 sparse+dense。要实现研究愿景，必须新增独立真正的 embedding 检索和评测人工验证的停止门。
+**重要区别**：本仓库 `Agent` 现阶段只在弱词法证据门通过后停止，证据充分性仍然只是很弱的代理条件；B2 不是成熟的 multi-hop Agentic Search。`hybrid` 是两个 lexical 排名，不是 sparse+dense。要实现研究愿景，必须新增独立真正的 embedding 检索和评测人工验证的停止门。
 
 ## 3. 技术栈与为什么这么选
 
@@ -50,7 +50,7 @@ CLI/API → Agent Runtime (run_id, max_calls, state, checkpoint)
 |---|---|---|---|---|---|
 | B0 | BM25 | 无 | 无 | 关键词基线 | 已实现、测试 |
 | B1 | BM25 + char-gram RRF | 无 | 无 | Lexical rank fusion 效应 | 已实现、测试 |
-| B2 | B1 | bounded rule planner | 弱（有候选即停止） | Tool Loop 的运行成本 | 原型实现；不代表成熟 Agentic Search |
+| B2 | B1 | bounded rule planner | 弱词法覆盖门 | Tool Loop 的运行成本及拒答代理 | 原型实现；不代表成熟 Agentic Search |
 | B3 | B1 + Dense / Rerank | LLM query planner | 引用充分性+终止预算 | 多轮动态检索效应 | 尚未实现 |
 | B4 | B3 | 同 | + crash replay & robust safety | 可靠性增量 | 尚未实现 |
 | B5 | B4 | 同 | 同 + SFT/DPO | 后训练是否值得 | 可选研究，尚未实现 |
@@ -93,7 +93,7 @@ CLI/API → Agent Runtime (run_id, max_calls, state, checkpoint)
 
 | Sprint | 范围 | 具体交付与评审 |
 |---|---|---|
-| S0 (已实现) | offline seed | Corpus、BM25/RRF、rule planner、checkpoint、CLI、23 fixture、23 tests、文档/PPT |
+| S0 (已实现) | offline seed | Corpus、BM25/RRF、rule planner、checkpoint、CLI、23 fixture、自动化测试、文档/PPT |
 | S1 | 真正模型策略 | 真实模型 tool-planning trace、schema errors、预算统计、≥10 人工核验任务 |
 | S2 | Retriever 增强 | Dense+Rerank；检索的独立 holdout；每题回归分析 |
 | S3 | evidence gate | 证据门控与多轮 query；真实 human answer annotation |
