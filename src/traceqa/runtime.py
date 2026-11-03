@@ -33,6 +33,7 @@ class State:
     status: str = "running"
     step: int = 0
     retrieved: list[str] = field(default_factory=list)
+    observations: list[dict] = field(default_factory=list)
     attempted: list[str] = field(default_factory=list)
     events: list[Event] = field(default_factory=list)
     answer: str = ""
@@ -97,6 +98,11 @@ class ToolError(RuntimeError):
     pass
 
 
+class PlannerError(RuntimeError):
+    """Recoverable planning-provider/schema failure, not absence of evidence."""
+    pass
+
+
 class ReadOnlyTools:
     def __init__(self, corpus: Corpus, fail_first: bool = False):
         self.corpus = corpus
@@ -123,6 +129,8 @@ class Agent:
 
     def run(self, query: str, *, mode: str = "hybrid", budget: int = 3,
             resume: str | None = None) -> State:
+        if not isinstance(query, str) or not query.strip() or len(query) > 1000:
+            raise ValueError("query must contain 1-1000 characters")
         if mode not in ("bm25", "hybrid"):
             raise ValueError("unknown retrieval mode")
         if not 1 <= budget <= 8:
@@ -140,14 +148,25 @@ class Agent:
         # tool_start but before tool_result is replayed ONLY because search_docs
         # is a read-only/idempotent operation. Never generalize to mutations.
         pending = bool(state.events) and state.events[-1].kind == "tool_start"
+        planner_failed = False
         while state.step < state.budget or pending:
             if pending:
                 q = state.events[-1].payload["query"]
                 pending = False
                 state.events.append(Event(state.step, "tool_replay", {"query": q, "read_only": True}))
             else:
-                q = self.planner.next_query(state)
+                try:
+                    q = self.planner.next_query(state)
+                except PlannerError as exc:
+                    # A provider failure must not be mislabeled as "no evidence".
+                    state.events.append(Event(state.step, "planner_error", {"error": str(exc)[:160]}))
+                    planner_failed = True
+                    break
                 if q is None or q in state.attempted:
+                    break
+                if not isinstance(q, str) or not q.strip() or len(q) > 1000:
+                    state.events.append(Event(state.step, "planner_error", {"error": "invalid planner query"}))
+                    planner_failed = True
                     break
                 state.attempted.append(q)
                 state.step += 1
@@ -162,6 +181,9 @@ class Agent:
                     self.store.save(state)
                 continue
             state.events.append(Event(state.step, "tool_result", {"ids": [h.id for h in hits]}))
+            # Short untrusted snippets let an optional model planner adapt on
+            # observations, not just opaque file IDs. Never execute source text.
+            state.observations = [{"id": hit.id, "snippet": hit.text[:160]} for hit in hits[:3]]
             for hit in hits:
                 if hit.id not in state.retrieved:
                     state.retrieved.append(hit.id)
@@ -176,7 +198,10 @@ class Agent:
                 state.citations = supported[:3]
                 break
         state.citations = [d for d in state.citations if d in docs][:3]
-        if state.citations:
+        if planner_failed:
+            state.answer = "规划器执行失败：未完成证据核验，请检查模型端点与调用日志。"
+            state.status = "planning_failed"
+        elif state.citations:
             # Conservative extractive evidence: no model synthesis, no invented diagnosis.
             state.answer = "候选证据（尚需人工判断因果关系）：\n" + "\n".join(
                 f"[{doc_id}] {self._excerpt(docs[doc_id].text, query)}" for doc_id in state.citations)

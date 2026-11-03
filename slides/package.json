@@ -1,0 +1,8 @@
+{
+  "name": "traceqa-training-deck",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Editable presentation generator for TRACE-QA Agent Engineering Lab",
+  "scripts": { "build": "node build_slides.js" },
+  "dependencies": { "pptxgenjs": "^4.0.0" }
+}

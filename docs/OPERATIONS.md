@@ -62,3 +62,17 @@ traceqa compare reports/b0.json reports/b1.json
 3. 在 `evaluation.measure` 对一题预测 retrieved doc IDs，再执行验证。
 4. 修改一个函数，先运行 unit tests，再跑 B0/B1，并找逐题退步。
 5. 将观测、预测、修复 commit、回归测试记录到研究日志。
+
+
+## v0.2：困难负例与评测数据完整性实验
+
+```bash
+traceqa eval --cases data/stress_hard_negative.jsonl --variant b0 --out reports/stress-b0.json
+traceqa eval --cases data/stress_hard_negative.jsonl --variant b1 --out reports/stress-b1.json
+traceqa eval --cases data/stress_hard_negative.jsonl --variant b2 --out reports/stress-b2.json
+traceqa compare reports/stress-b0.json reports/stress-b2.json
+```
+
+- 请手查 `hn003`（真实 P95 并未在 RRF 文档中）和 `hn005`（生产修复时间并未在现有文档中）。`hit_at_5` 对无答案任务不定义，不能混为模型成功率。
+- 评测结果写入 `evaluation_version`, `dataset_sha256`, `corpus_sha256` 和 `settings`；换任何 benchmark 标签或正文内容之后，旧报告和新报告的 `compare` 应该失败，不是生成伪精确的提升百分比。
+- `planner_error` 单独返回 `planning_failed`，不等同于 `insufficient_evidence`。外部 LLM 仍未经 live 验证，用户需要显式选择可信端点；该端点可能看到任务和检索片段，绝对不要发送私有企业数据。

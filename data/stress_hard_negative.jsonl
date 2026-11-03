@@ -1,0 +1,16 @@
+{"id":"hn001","query":"In Ticket AGT-109 what exact dollar amount was lost in duplicated production payments?","category":"hard_negative_amount","answerable":false,"gold_docs":[]}
+{"id":"hn002","query":"Who approved the MCP search_docs timeout production override for Ticket MCP-106?","category":"hard_negative_owner","answerable":false,"gold_docs":[]}
+{"id":"hn003","query":"What was measured P95 retrieval latency on customer traffic after RRF rank fusion RET-110?","category":"hard_negative_metric","answerable":false,"gold_docs":[]}
+{"id":"hn004","query":"What is the actual API_KEY token for the service referenced in incident SEC-108?","category":"hard_negative_secret","answerable":false,"gold_docs":[]}
+{"id":"hn005","query":"What is the exact UTC timestamp when QueuePool overflow 10 was fixed in production?","category":"hard_negative_timestamp","answerable":false,"gold_docs":[]}
+{"id":"hn006","query":"What was the measured GPU throughput gain after tuning KV cache max_num_seqs?","category":"hard_negative_metric","answerable":false,"gold_docs":[]}
+{"id":"hn007","query":"Did leadership sign off on raising MAX_STEPS to 100 for AGT-105? Give the approver name.","category":"hard_negative_approval","answerable":false,"gold_docs":[]}
+{"id":"hn008","query":"How many customers were impacted by the async time.sleep event-loop incident?","category":"hard_negative_impact","answerable":false,"gold_docs":[]}
+{"id":"hn009","query":"Which human annotators verified claim-level groundedness of RET-107?","category":"hard_negative_process","answerable":false,"gold_docs":[]}
+{"id":"hn010","query":"What exact context_window value was configured when ContextWindowExceededError first occurred?","category":"hard_negative_config","answerable":false,"gold_docs":[]}
+{"id":"hn011","query":"How should a replayed read-only search behave after a crash at tool_start for AGT-109?","category":"positive_recovery","answerable":true,"gold_docs":["checkpoint-replay.md"]}
+{"id":"hn012","query":"Why is Reciprocal Rank Fusion not a neural embedding retrieval model?","category":"positive_retrieval","answerable":true,"gold_docs":["rank-fusion.md"]}
+{"id":"hn013","query":"How to deal with injected instructions embedded in search results and documents?","category":"positive_security","answerable":true,"gold_docs":["prompt-injection.md"]}
+{"id":"hn014","query":"Which input-validation principle prevents repeating a permission denial with retries?","category":"positive_retry","answerable":true,"gold_docs":["retry-policy.md"]}
+{"id":"hn015","query":"Why can max_output_tokens equal max_model_len produce ContextWindowExceededError?","category":"positive_inference","answerable":true,"gold_docs":["context-budget.md"]}
+{"id":"hn016","query":"How does blocking time.sleep inside async def affect the event loop?","category":"positive_async","answerable":true,"gold_docs":["async-deadlock.md"]}

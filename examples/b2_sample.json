@@ -1,4 +1,13 @@
 {
+  "evaluation_version": "retrieval-v2",
+  "dataset_sha256": "76952fb1c16386cecbb7cd95e9b52e8339448ef3f4a7c307215d94f77fd8484c",
+  "corpus_sha256": "f300c020d6e9b76dd97e6998531cb81f1dbb9401eb9336bea6fa8aeca67e6dcf",
+  "settings": {
+    "k": 5,
+    "mode": "hybrid",
+    "strategy": "first_seen_across_hops",
+    "planner": "deterministic_reference"
+  },
   "variant": "b2",
   "count": 23,
   "scope": "retrieval_only",
@@ -8,7 +17,7 @@
     "recall_at_5_answerable": 1.0,
     "correct_abstention_unanswerable": 1,
     "mean_calls": 1.3478,
-    "mean_latency_ms": 0.8779
+    "mean_latency_ms": 0.9515
   },
   "rows": [
     {
@@ -21,12 +30,15 @@
       "retrieved": [
         "connection-pool.md"
       ],
+      "all_retrieved": [
+        "connection-pool.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.814
+      "latency_ms": 0.815
     },
     {
       "id": "q002",
@@ -42,12 +54,19 @@
         "retry-policy.md",
         "rank-fusion.md"
       ],
+      "all_retrieved": [
+        "connection-pool.md",
+        "checkpoint-replay.md",
+        "mcp-tool-timeout.md",
+        "retry-policy.md",
+        "rank-fusion.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.789
+      "latency_ms": 0.665
     },
     {
       "id": "q003",
@@ -61,12 +80,17 @@
         "prompt-injection.md",
         "connection-pool.md"
       ],
+      "all_retrieved": [
+        "async-deadlock.md",
+        "prompt-injection.md",
+        "connection-pool.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.659
+      "latency_ms": 0.734
     },
     {
       "id": "q004",
@@ -82,12 +106,19 @@
         "checkpoint-replay.md",
         "context-budget.md"
       ],
+      "all_retrieved": [
+        "async-deadlock.md",
+        "agent-loop.md",
+        "mcp-tool-timeout.md",
+        "checkpoint-replay.md",
+        "context-budget.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.676
+      "latency_ms": 0.757
     },
     {
       "id": "q005",
@@ -99,12 +130,15 @@
       "retrieved": [
         "oom-kv-cache.md"
       ],
+      "all_retrieved": [
+        "oom-kv-cache.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.716
+      "latency_ms": 0.689
     },
     {
       "id": "q006",
@@ -120,12 +154,19 @@
         "agent-loop.md",
         "retry-policy.md"
       ],
+      "all_retrieved": [
+        "oom-kv-cache.md",
+        "context-budget.md",
+        "checkpoint-replay.md",
+        "agent-loop.md",
+        "retry-policy.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.683
+      "latency_ms": 0.645
     },
     {
       "id": "q007",
@@ -140,12 +181,18 @@
         "connection-pool.md",
         "rag-grounding.md"
       ],
+      "all_retrieved": [
+        "mcp-tool-timeout.md",
+        "agent-loop.md",
+        "connection-pool.md",
+        "rag-grounding.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.638
+      "latency_ms": 0.627
     },
     {
       "id": "q008",
@@ -161,12 +208,19 @@
         "context-budget.md",
         "prompt-injection.md"
       ],
+      "all_retrieved": [
+        "mcp-tool-timeout.md",
+        "checkpoint-replay.md",
+        "agent-loop.md",
+        "context-budget.md",
+        "prompt-injection.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 0.3333333333333333,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.713
+      "latency_ms": 0.895
     },
     {
       "id": "q009",
@@ -181,12 +235,18 @@
         "mcp-tool-timeout.md",
         "oom-kv-cache.md"
       ],
+      "all_retrieved": [
+        "retrieval-bm25.md",
+        "context-budget.md",
+        "mcp-tool-timeout.md",
+        "oom-kv-cache.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.653
+      "latency_ms": 0.839
     },
     {
       "id": "q010",
@@ -201,12 +261,18 @@
         "retrieval-bm25.md",
         "mcp-tool-timeout.md"
       ],
+      "all_retrieved": [
+        "rag-grounding.md",
+        "agent-loop.md",
+        "retrieval-bm25.md",
+        "mcp-tool-timeout.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.715
+      "latency_ms": 0.75
     },
     {
       "id": "q011",
@@ -222,12 +288,19 @@
         "retrieval-bm25.md",
         "agent-loop.md"
       ],
+      "all_retrieved": [
+        "prompt-injection.md",
+        "checkpoint-replay.md",
+        "context-budget.md",
+        "retrieval-bm25.md",
+        "agent-loop.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.664
+      "latency_ms": 0.668
     },
     {
       "id": "q012",
@@ -243,12 +316,19 @@
         "rank-fusion.md",
         "retrieval-bm25.md"
       ],
+      "all_retrieved": [
+        "checkpoint-replay.md",
+        "agent-loop.md",
+        "mcp-tool-timeout.md",
+        "rank-fusion.md",
+        "retrieval-bm25.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 1.078
+      "latency_ms": 0.667
     },
     {
       "id": "q013",
@@ -262,12 +342,17 @@
         "retrieval-bm25.md",
         "mcp-tool-timeout.md"
       ],
+      "all_retrieved": [
+        "rank-fusion.md",
+        "retrieval-bm25.md",
+        "mcp-tool-timeout.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.642
+      "latency_ms": 0.584
     },
     {
       "id": "q014",
@@ -280,12 +365,16 @@
         "context-budget.md",
         "oom-kv-cache.md"
       ],
+      "all_retrieved": [
+        "context-budget.md",
+        "oom-kv-cache.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.581
+      "latency_ms": 0.913
     },
     {
       "id": "q015",
@@ -300,12 +389,18 @@
         "mcp-tool-timeout.md",
         "prompt-injection.md"
       ],
+      "all_retrieved": [
+        "retry-policy.md",
+        "rag-grounding.md",
+        "mcp-tool-timeout.md",
+        "prompt-injection.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.64
+      "latency_ms": 0.875
     },
     {
       "id": "q016",
@@ -321,12 +416,19 @@
         "context-budget.md",
         "retry-policy.md"
       ],
+      "all_retrieved": [
+        "checkpoint-replay.md",
+        "mcp-tool-timeout.md",
+        "rag-grounding.md",
+        "context-budget.md",
+        "retry-policy.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.643
+      "latency_ms": 0.684
     },
     {
       "id": "q017",
@@ -342,12 +444,19 @@
         "agent-loop.md",
         "retrieval-bm25.md"
       ],
+      "all_retrieved": [
+        "prompt-injection.md",
+        "checkpoint-replay.md",
+        "context-budget.md",
+        "agent-loop.md",
+        "retrieval-bm25.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.637
+      "latency_ms": 0.946
     },
     {
       "id": "q018",
@@ -361,12 +470,17 @@
         "retry-policy.md",
         "rank-fusion.md"
       ],
+      "all_retrieved": [
+        "retrieval-bm25.md",
+        "retry-policy.md",
+        "rank-fusion.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 3,
-      "latency_ms": 1.735
+      "latency_ms": 1.965
     },
     {
       "id": "q019",
@@ -382,12 +496,19 @@
         "prompt-injection.md",
         "mcp-tool-timeout.md"
       ],
+      "all_retrieved": [
+        "rag-grounding.md",
+        "rank-fusion.md",
+        "retrieval-bm25.md",
+        "prompt-injection.md",
+        "mcp-tool-timeout.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.828
+      "latency_ms": 0.692
     },
     {
       "id": "q020",
@@ -403,12 +524,19 @@
         "retry-policy.md",
         "oom-kv-cache.md"
       ],
+      "all_retrieved": [
+        "context-budget.md",
+        "mcp-tool-timeout.md",
+        "agent-loop.md",
+        "retry-policy.md",
+        "oom-kv-cache.md"
+      ],
       "hit_at_5": true,
       "reciprocal_rank": 1.0,
       "recall_at_5": 1.0,
       "correct_abstention": null,
       "calls": 1,
-      "latency_ms": 0.68
+      "latency_ms": 0.646
     },
     {
       "id": "q021",
@@ -422,12 +550,20 @@
         "rag-grounding.md",
         "async-deadlock.md"
       ],
+      "all_retrieved": [
+        "retry-policy.md",
+        "agent-loop.md",
+        "retrieval-bm25.md",
+        "rag-grounding.md",
+        "async-deadlock.md",
+        "context-budget.md"
+      ],
       "hit_at_5": false,
       "reciprocal_rank": 0.0,
       "recall_at_5": null,
       "correct_abstention": true,
       "calls": 3,
-      "latency_ms": 1.695
+      "latency_ms": 1.829
     },
     {
       "id": "q022",
@@ -441,12 +577,19 @@
         "prompt-injection.md",
         "retry-policy.md"
       ],
+      "all_retrieved": [
+        "rag-grounding.md",
+        "retrieval-bm25.md",
+        "agent-loop.md",
+        "prompt-injection.md",
+        "retry-policy.md"
+      ],
       "hit_at_5": false,
       "reciprocal_rank": 0.0,
       "recall_at_5": null,
       "correct_abstention": true,
       "calls": 3,
-      "latency_ms": 1.683
+      "latency_ms": 2.142
     },
     {
       "id": "q023",
@@ -460,12 +603,19 @@
         "checkpoint-replay.md",
         "context-budget.md"
       ],
+      "all_retrieved": [
+        "rag-grounding.md",
+        "retrieval-bm25.md",
+        "agent-loop.md",
+        "checkpoint-replay.md",
+        "context-budget.md"
+      ],
       "hit_at_5": false,
       "reciprocal_rank": 0.0,
       "recall_at_5": null,
       "correct_abstention": true,
       "calls": 3,
-      "latency_ms": 1.629
+      "latency_ms": 1.857
     }
   ]
 }

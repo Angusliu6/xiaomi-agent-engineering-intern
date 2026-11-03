@@ -40,3 +40,12 @@ An always-return-top-K retriever returned documents for all 3 deliberately unans
 5. **Crash/replay**: instrument checkpoint at five boundaries; prove idempotent read-only replay and deny non-idempotent tools without approval.
 
 The result is valuable mainly because it establishes the scientific workflow: same-input comparison, failure localization, isolated hypotheses, uncertainty, and honest limitations.
+
+
+## Second audit / stress suite (2026-11-03; not a held-out production benchmark)
+
+We added `data/stress_hard_negative.jsonl` (16 authored cases; 6 answerable and 10 deliberately unanswerable despite high topic overlap). B0/B1 each hit 6/6 answerable and had 0/10 no-result proxy abstentions. B2 hit 6/6 answerable but correctly abstained on **only 4/10 unanswerable** cases. Thus the previous 3/3 abstentions on easy negatives were misleadingly optimistic.
+
+Evaluation v0.2 now includes SHA-256 of full label-bearing benchmark and full corpus; paired comparisons reject mismatches and return explicit gain/regression case IDs. Older `examples/` were regenerated with v0.2 metadata to keep copy-paste commands working. This does not provide independent data or answer correctness.
+
+The next falsifiable experiment should focus on **requested fact type vs supporting spans** (date/amount/person/actual production metric) instead of adding more generic lexical keyword thresholds. See `docs/AUDIT_2026-11-03.md` and `docs/HARD_NEGATIVE_PROTOCOL.md`.
