@@ -3,7 +3,7 @@
 ## 本次真实运行的验证
 
 1. Python 包安装：本地 `python -m pip install -e . --no-build-isolation` 成功；不需要 GPU 和 API Key。
-2. 自动测试：`python -m unittest discover -s tests -q` → **44 tests / OK**。
+2. 自动测试：`python -m unittest discover -s tests -q` → **51 tests / OK**。
 3. 离线检索：`traceqa eval --variant b0/b1/b2` → 各处理 23 条合成样本，真实 JSON 输出保存在 `examples/`。
 4. 配对比较：`traceqa compare examples/b0_sample.json examples/b1_sample.json` → gains=1, regressions=0, unchanged=19，bootstrap 区间包含 0。
 5. 演示幻灯：`slides/build_slides.js` 实际生成 31 页 PPTX；经 LibreOffice 导出 PDF 检查首页和抽样页面，无明显字体乱码或裁切。
@@ -32,7 +32,7 @@
 
 ## v0.2 第二轮独立审计（本地已完成；远程 CI 状态以 GitHub 为准）
 
-- `python -m unittest discover -s tests -v` → **44 tests / OK**（25 原始 + 19 新增审计测试）。
+- `python -m unittest discover -s tests -v` → **51 tests / OK**（25 原始 + 19 新增审计测试 + 7 CLI 契约测试）。
 - 新的 `evaluation_version=retrieval-v2` 及 corpus/benchmark SHA-256；不再允许跨不同 gold 标注或不同 corpus 的 paired compare。**仓库内 `examples/*_sample.json` 已重生成 v0.2 报告；若用户手里有旧版结果，不能与新报告直接 compare。**
 - `traceqa eval --cases data/stress_hard_negative.jsonl --variant b2` → 6/6 可回答任务 Hit@5，**4/10 不可回答任务通过弱词法门实现拒答**；剩余 6/10 仍错误输出候选证据。这个压力集依旧是人工合成。
 - `planner_error` 是独立失败状态；外部 LLM 请求拒绝 URL fragment/用户信息/redirect，并限制响应。此处只有 Mock 测试，没有真实服务商联调。

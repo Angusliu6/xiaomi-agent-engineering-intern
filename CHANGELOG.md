@@ -3,7 +3,7 @@
 ## v0.2 · Independent audit (2026-11-03)
 
 - Harden paired evaluation with benchmark and corpus SHA-256 provenance and strict label consistency checks; expose exact gained/regressed case IDs.
-- Add 19 adversarial tests (total offline tests: 44).
+- Add 19 adversarial audit tests and 7 CLI contracts (total offline tests: 51; measured `traceqa` line coverage: 93%).
 - Distinguish optional provider/planner failures (`planning_failed`) from genuine insufficient evidence, and include bounded untrusted tool observations for planner context.
 - Reject URL userinfo, fragments, query parameters, redirects, oversized provider responses in opt-in planner.
 - Add authored stress set: 10 high-overlap unanswerable / 6 answerable; measured B2 abstention proxy 4/10 for negatives, exposing a major weakness.

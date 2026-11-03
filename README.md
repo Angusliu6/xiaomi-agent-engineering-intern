@@ -94,7 +94,7 @@ User query ──> Bounded Runtime ──> Planner (offline rules / optional LLM
 
 Command examples in `examples/` are outputs from the **synthetic fixture** in this repository, not a benchmark on authentic industry incidents. The sample dataset is small and has authored answers, hence it is **not evidence of generalization**. The project deliberately logs both gains and regressions; observe whether confidence intervals include zero. B2 abstains on 3/3 easy negatives **in the original fixture**, but only **4/10 high-overlap unanswerable cases** in the new authored stress suite. This reveals lexical evidence-gate false positives and is not proof of calibration.
 
-**44 local automated tests have passed (25 original + 19 audit tests).** A v0.2 integrity check prevents paired comparisons between different benchmark labels or corpus contents, but does not solve data bias. **No** text generation model quality has been measured. **No** live MCP interoperability test, distributed recovery test, retrieval abuse red-team, or real GitHub Issue benchmark has been completed. Those are explicit next milestones, not hidden claims.
+**51 local automated tests have passed (25 original + 19 adversarial audit + 7 CLI contracts); 93% measured line coverage across `traceqa` modules.** A v0.2 integrity check prevents paired comparisons between different benchmark labels or corpus contents, but does not solve data bias. **No** text generation model quality has been measured. **No** live MCP interoperability test, distributed recovery test, retrieval abuse red-team, or real GitHub Issue benchmark has been completed. Those are explicit next milestones, not hidden claims.
 
 ## What makes this JD-relevant?
 

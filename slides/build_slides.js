@@ -41,7 +41,7 @@ s=base('面试 90 秒回答框架','不虚构 SFT、实测指标或个人贡献'
 s=base('第一场口试（不看答案）','先预测，再写最小实验，再解释反例',28);bullet(s,['Q1 为什么 Runtime 不等于 LLM？','Q2 top_k=True 为什么是个 Python 类型边界陷阱？','Q3 Tool Start 后崩溃，能否直接重复调用？','Q4 Hit@5 ↑ 但 Answer Accuracy ↓，说明什么？','Q5 B0 19/20，B1 20/20，为什么不能宣称行业领先？','Q6 “有 citation” 是否代表结论可靠？']);
 s=base('工程师的真正晋级条件','你能解释自己的失败，也能用数据审查自己的成功',29);tx(s,'Make failures reproducible.\nMake improvements falsifiable.\nMake ownership honest.',.83,2.15,11.5,2.8,{fontSize:36,bold:true,color:BLUE,breakLine:false});rect(s,.8,5.54,11.8,.8);tx(s,'下一次提交：真实数据 + 真实 LLM + 人工审查 + 独立 Holdout',1.08,5.68,11.15,.48,{fontSize:20,bold:true});
 s=base('代码审计 v0.2：评测可复现，不可默默换题','首轮独立审计修复：评测数据指纹 + 明确的故障语义',30);
-cards(s,[['协议锁定','SHA-256 记录 dataset + corpus；不同 gold/内容的报告不得作配对比较。'],['模型规划','记录检索片段与调用结果；远端出错是 planning_failed，不是假装无证据。'],['可验证边界','44 个离线测试通过；未做 provider live run，也不推导工业质量。']],2.52);
+cards(s,[['协议锁定','SHA-256 记录 dataset + corpus；不同 gold/内容的报告不得作配对比较。'],['模型规划','记录检索片段与调用结果；远端出错是 planning_failed，不是假装无证据。'],['可验证边界','51 个离线测试通过；未做 provider live run，也不推导工业质量。']],2.52);
 s=base('反例冲击：10 道高重叠无答案问题','同样是自建数据，但能暴露“搜到文档≠答得出来”的缺陷',31);
 cards(s,[['旧基准','23 道合成题：20 可回答\nB0 Hit@5=95%\nB1 Hit@5=100%'],['新的压力集','16 道合成题\n10 无答案/6 有答案\nB2 正确拒答 4/10'],['下一研究动作','证据支持类型标注\n人工 Gold Answer\n独立公开 holdout']],2.52);
 const out=path.join(__dirname,'TRACE-QA-Agent-Engineering-Course.pptx');pptx.writeFile({fileName:out});
