@@ -89,6 +89,18 @@ class TypedEvidenceGateTests(unittest.TestCase):
         self.assertEqual(state.status, "tool_failed")
         self.assertEqual(state.outcome_reason, "tool_error_without_successful_search")
 
+    def test_checkpoint_policy_cannot_change_on_resume(self):
+        import tempfile
+        from traceqa.runtime import CheckpointStore
+        with tempfile.TemporaryDirectory() as directory:
+            corpus = Corpus.from_dir(ROOT / "data/corpus")
+            store = CheckpointStore(Path(directory) / "checkpoints.sqlite")
+            run = Agent(ReadOnlyTools(corpus), store=store, evidence_policy="typed").run(
+                "RRF fusion")
+            with self.assertRaisesRegex(ValueError, "policy mismatch"):
+                Agent(ReadOnlyTools(corpus), store=store, evidence_policy="lexical").run(
+                    "RRF fusion", resume=run.run_id)
+
     def test_bad_policy_is_rejected(self):
         corpus = Corpus.from_dir(ROOT / "data/corpus")
         with self.assertRaises(ValueError):
