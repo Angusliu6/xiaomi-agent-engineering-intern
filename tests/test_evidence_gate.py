@@ -28,7 +28,7 @@ class TypedEvidenceGateTests(unittest.TestCase):
             ("What exact UTC timestamp was the queuepool incident fixed?",
              "QueuePool incident fixed at 2026-11-04T18:03:00Z UTC."),
             ("What exact context_window value was configured?",
-             "context_window: 8192 was configured."),
+             "context_window: 8192 was configured correctly"),
             ("What exact dollar amount was lost in duplicated payments?",
              "Duplicated payments caused a loss of $18,300 dollars."),
         ]
