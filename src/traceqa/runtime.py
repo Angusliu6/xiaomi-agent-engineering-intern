@@ -41,6 +41,7 @@ class State:
     citations: list[str] = field(default_factory=list)
     elapsed_ms: float = 0
     outcome_reason: str = ""
+    evidence_policy: str = "lexical"
 
     def to_dict(self):
         return asdict(self)
@@ -140,11 +141,13 @@ class Agent:
             raise ValueError("unknown retrieval mode")
         if not 1 <= budget <= 8:
             raise ValueError("budget must be between 1 and 8")
-        state = self.store.load(resume) if resume and self.store else State(str(uuid.uuid4()), query, mode, budget)
+        state = self.store.load(resume) if resume and self.store else State(str(uuid.uuid4()), query, mode, budget, evidence_policy=self.evidence_policy)
         if resume and not self.store:
             raise ValueError("resuming requires checkpoint store")
         if resume and (state.query != query or state.mode != mode or state.budget != budget):
             raise ValueError("resume config mismatch")
+        if resume and state.evidence_policy != self.evidence_policy:
+            raise ValueError("resume evidence policy mismatch")
         if state.status != "running":
             return state
         start = time.perf_counter()
