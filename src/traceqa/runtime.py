@@ -15,6 +15,7 @@ import uuid
 from contextlib import closing
 from typing import Protocol
 from .retrieval import Corpus, Hit, tokenize
+from .evidence import evaluate_evidence
 
 
 @dataclass
@@ -39,6 +40,7 @@ class State:
     answer: str = ""
     citations: list[str] = field(default_factory=list)
     elapsed_ms: float = 0
+    outcome_reason: str = ""
 
     def to_dict(self):
         return asdict(self)
@@ -122,10 +124,13 @@ class ReadOnlyTools:
 
 class Agent:
     def __init__(self, tools: ReadOnlyTools, *, store: CheckpointStore | None = None,
-                 planner: SearchPlanner | None = None):
+                 planner: SearchPlanner | None = None, evidence_policy: str = "lexical"):
+        if evidence_policy not in ("lexical", "typed"):
+            raise ValueError("evidence_policy must be lexical or typed")
         self.tools = tools
         self.store = store
         self.planner = planner or DeterministicPlanner()
+        self.evidence_policy = evidence_policy
 
     def run(self, query: str, *, mode: str = "hybrid", budget: int = 3,
             resume: str | None = None) -> State:
@@ -187,9 +192,20 @@ class Agent:
             for hit in hits:
                 if hit.id not in state.retrieved:
                     state.retrieved.append(hit.id)
-            supported = [hit.id for hit in hits if self._basic_evidence_gate(state.query, hit.text)]
-            state.events.append(Event(state.step, "evidence_gate", {"supported_ids": supported,
-                "warning": "lexical heuristic, not claim-level grounding"}))
+            if self.evidence_policy == "typed":
+                decisions = [(hit.id, evaluate_evidence(state.query, hit.text)) for hit in hits]
+                supported = [doc_id for doc_id, decision in decisions if decision.supported]
+                rejection_reasons = {doc_id: decision.reason for doc_id, decision in decisions
+                                     if not decision.supported}
+                fact_type = decisions[0][1].intent if decisions else "unknown"
+            else:
+                supported = [hit.id for hit in hits if self._basic_evidence_gate(state.query, hit.text)]
+                rejection_reasons = {}
+                fact_type = "legacy_lexical"
+            state.events.append(Event(state.step, "evidence_gate", {
+                "policy": self.evidence_policy, "intent": fact_type,
+                "supported_ids": supported, "rejections": rejection_reasons,
+                "warning": "heuristic candidate filter, NOT entailment or answer correctness"}))
             if self.store:
                 self.store.save(state)
             # Weak lexical evidence gate: catches some accidental noise, but
@@ -201,14 +217,24 @@ class Agent:
         if planner_failed:
             state.answer = "规划器执行失败：未完成证据核验，请检查模型端点与调用日志。"
             state.status = "planning_failed"
+            state.outcome_reason = "planner_error"
         elif state.citations:
             # Conservative extractive evidence: no model synthesis, no invented diagnosis.
             state.answer = "候选证据（尚需人工判断因果关系）：\n" + "\n".join(
                 f"[{doc_id}] {self._excerpt(docs[doc_id].text, query)}" for doc_id in state.citations)
             state.status = "evidence_found"
+            state.outcome_reason = "candidate_evidence_only"
+        elif not any(event.kind == "tool_result" for event in state.events) and any(
+                event.kind == "tool_error" for event in state.events):
+            state.answer = "检索工具执行失败，尚未完成证据核验。"
+            state.status = "tool_failed"
+            state.outcome_reason = "tool_error_without_successful_search"
         else:
             state.answer = "证据不足：没有找到可靠的文档支持，不能据此下诊断结论。"
             state.status = "insufficient_evidence"
+            state.outcome_reason = (
+                "budget_exhausted_without_support" if state.step >= state.budget
+                else "planner_stopped_without_support")
         state.elapsed_ms += round((time.perf_counter() - start) * 1000, 3)
         state.events.append(Event(state.step, "finish", {"status": state.status}))
         if self.store:
