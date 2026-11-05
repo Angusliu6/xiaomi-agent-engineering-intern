@@ -54,3 +54,16 @@
 - 你如何设计一个 *有证据缺口追踪*、但不泄漏 holdout gold 的 Agent 动态检索实验？
 
 验收：每题必须提交预测、`traceqa` 实际输出、失败归因和一段可复现的测试，不能只说概念。
+
+## Slide 32 — B3 事实类型证据门
+
+- 预测题：在不改变 Retriever 的前提下，新加 Typed Gate 会怎样改变正确拒答率与调用次数？
+- 动手：运行 `LAB_08_TYPED_EVIDENCE_GATE.md` 中 B2/B3 实验，列出全部新增正确拒答案例。
+- 反事实：若错误文档也有一个 P95 数值，为什么类型门可能继续失效？
+
+## Slide 33 — 研究科学性和必要局限
+
+- 为什么作者见过的 10 条 Hard Negative 不能当真正的 Holdout？
+- 如果 Challenger 多了 0.75 次 Tool Call，什么产品约束下仍值得部署？
+- 什么实验能证伪“类型存在性约束能够实现 Claim Verification”？
+- 口试要求：用 `docs/EXPERIMENT_20261105_TYPED_EVIDENCE_GATE.md` 指出三条不能写在简历上的夸大表述。
