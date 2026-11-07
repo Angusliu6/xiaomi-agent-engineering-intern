@@ -70,7 +70,7 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
     it as `first_seen_across_hops` to avoid silently claiming equivalent ranks.
     """
     _validate_cases(cases)
-    if variant not in ("b0", "b1", "b2"):
+    if variant not in ("b0", "b1", "b2", "b3"):
         raise ValueError("choose b0, b1, or b2")
     corpus_ids = {d.id for d in corpus.docs}
     if not corpus_ids:
@@ -83,13 +83,15 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
     rows: list[dict] = []
     mode = "bm25" if variant == "b0" else "hybrid"
     for case in cases:
-        if variant == "b2":
-            state = Agent(ReadOnlyTools(corpus)).run(case["query"], mode=mode, budget=3)
+        if variant in ("b2", "b3"):
+            policy = "typed" if variant == "b3" else "lexical"
+            state = Agent(ReadOnlyTools(corpus), evidence_policy=policy).run(case["query"], mode=mode, budget=3)
             predicted = state.retrieved[:5]
             all_retrieved = state.retrieved
             calls = state.step
             elapsed = state.elapsed_ms
             abstained = state.status == "insufficient_evidence"
+            status = state.status
         else:
             start = time.perf_counter()
             predicted = [h.id for h in corpus.search(case["query"], 5, mode)]
@@ -98,6 +100,7 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
             calls = 1
             # This is a *no-result proxy*, NOT an evidence-calibrated answer refusal.
             abstained = not predicted
+            status = "retrieval_only"
         gold = set(case["gold_docs"])
         first = next((i for i, doc_id in enumerate(predicted, 1) if doc_id in gold), 0)
         rows.append({"id": case["id"], "category": case.get("category", "general"),
@@ -106,7 +109,8 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
                      "hit_at_5": bool(first), "reciprocal_rank": 1 / first if first else 0.,
                      "recall_at_5": len(set(predicted) & gold) / len(gold) if gold else None,
                      "correct_abstention": abstained if not gold else None,
-                     "calls": calls, "latency_ms": round(elapsed, 3)})
+                     "candidate_acceptance_answerable": (status == "evidence_found") if gold and variant in ("b2", "b3") else None,
+                     "decision_status": status, "calls": calls, "latency_ms": round(elapsed, 3)})
 
     def mean(key, keep=lambda r: True):
         values = [r[key] for r in rows if keep(r) and r[key] is not None]
@@ -116,13 +120,15 @@ def measure(cases: list[dict], corpus: Corpus, *, variant: str = "b0") -> dict:
             "dataset_sha256": _digest(cases),
             "corpus_sha256": _digest([{"id": d.id, "text": d.text} for d in corpus.docs]),
             "settings": {"k": 5, "mode": mode, "strategy":
-                         "first_seen_across_hops" if variant == "b2" else "single_ranked_query",
-                         "planner": "deterministic_reference" if variant == "b2" else None},
+                         "first_seen_across_hops" if variant in ("b2", "b3") else "single_ranked_query",
+                         "planner": "deterministic_reference" if variant in ("b2", "b3") else None,
+                         "evidence_policy": "typed" if variant == "b3" else "lexical" if variant == "b2" else "none"},
             "variant": variant, "count": len(rows), "scope": "retrieval_only",
             "metrics": {"hit_at_5_answerable": mean("hit_at_5", lambda r: r["answerable"]),
                         "mrr_answerable": mean("reciprocal_rank", lambda r: r["answerable"]),
                         "recall_at_5_answerable": mean("recall_at_5", lambda r: r["answerable"]),
                         "correct_abstention_unanswerable": mean("correct_abstention", lambda r: not r["answerable"]),
+                        "candidate_acceptance_answerable": mean("candidate_acceptance_answerable", lambda r: r["answerable"]),
                         "mean_calls": mean("calls"),
                         "mean_latency_ms": mean("latency_ms")},
             "rows": rows}
@@ -157,7 +163,29 @@ def paired_compare(a: dict, b: dict, iterations: int = 2000, seed: int = 42) -> 
     rng = random.Random(seed)
     samples = sorted(statistics.mean(rng.choice(differences) for _ in ids) for _ in range(iterations))
     lo, hi = int(.025 * (iterations - 1)), int(.975 * (iterations - 1))
+    # A separate paired comparison on no-answer decisions; retrieval metrics
+    # cannot measure this. No-answer proxy for B0/B1 must remain explicitly labeled.
+    no_answer_ids = sorted(k for k in x if not x[k]["answerable"])
+    abstention_delta = None
+    if no_answer_ids:
+        abstention_gains = [k for k in no_answer_ids
+                            if y[k]["correct_abstention"] and not x[k]["correct_abstention"]]
+        abstention_regressions = [k for k in no_answer_ids
+                                 if x[k]["correct_abstention"] and not y[k]["correct_abstention"]]
+        deltas = [int(y[k]["correct_abstention"]) - int(x[k]["correct_abstention"])
+                  for k in no_answer_ids]
+        rng2 = random.Random(seed)
+        boot = sorted(statistics.mean(rng2.choice(deltas) for _ in no_answer_ids)
+                      for _ in range(iterations))
+        abstention_delta = {
+            "paired_n": len(no_answer_ids),
+            "delta_correct_abstention": round(statistics.mean(deltas), 4),
+            "bootstrap_95pct_ci": [round(boot[lo], 4), round(boot[hi], 4)],
+            "gain_case_ids": abstention_gains,
+            "regression_case_ids": abstention_regressions,
+        }
     return {"baseline": a["variant"], "challenger": b["variant"],
+            "paired_abstention": abstention_delta,
             "dataset_sha256": a["dataset_sha256"], "corpus_sha256": a["corpus_sha256"],
             "paired_n": len(ids), "delta_hit_at_5": round(statistics.mean(differences), 4),
             "bootstrap_95pct_ci": [round(samples[lo], 4), round(samples[hi], 4)],

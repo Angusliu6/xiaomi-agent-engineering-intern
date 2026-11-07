@@ -18,13 +18,14 @@ def main(argv=None):
     ask.add_argument("query")
     ask.add_argument("--mode", choices=["bm25","hybrid"], default="hybrid")
     ask.add_argument("--budget", type=int, default=3)
+    ask.add_argument("--evidence-policy", choices=["lexical","typed"], default="lexical")
     ask.add_argument("--db", type=Path, default=Path(".traceqa/checkpoints.sqlite"))
     ask.add_argument("--resume", default=None, help="existing run_id")
     ask.add_argument("--llm-url", default=None, help="explicit opt-in OpenAI-compatible base URL ending in /v1")
     ask.add_argument("--model", default=None)
     ev = commands.add_parser("eval", help="retrieval-only gold-ID benchmark")
     ev.add_argument("--cases", type=Path, default=ROOT/"data/benchmark.jsonl")
-    ev.add_argument("--variant", choices=["b0","b1","b2"], default="b0")
+    ev.add_argument("--variant", choices=["b0","b1","b2","b3"], default="b0")
     ev.add_argument("--out", type=Path, required=True)
     cmp = commands.add_parser("compare")
     cmp.add_argument("a", type=Path); cmp.add_argument("b", type=Path)
@@ -39,7 +40,8 @@ def main(argv=None):
             planner = OpenAICompatiblePlanner(base_url=args.llm_url, model=args.model)
         elif args.model:
             parser.error("--llm-url required with --model")
-        state = Agent(ReadOnlyTools(corpus), store=CheckpointStore(args.db), planner=planner).run(
+        state = Agent(ReadOnlyTools(corpus), store=CheckpointStore(args.db), planner=planner,
+                      evidence_policy=args.evidence_policy).run(
             args.query, mode=args.mode, budget=args.budget, resume=args.resume)
         print(json.dumps(state.to_dict(), ensure_ascii=False, indent=2))
     else:
