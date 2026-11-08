@@ -90,6 +90,18 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
         return EvidenceDecision(False, intent, "insufficient_topical_overlap")
     if intent == "explanation":
         return EvidenceDecision(True, intent, "lexical_candidate_only")
+    # Scope RET measurements to the requested incident; still not entailment.
+    incident_ids = set(re.findall(r"\bRET-\d+\b", query.upper()))
+    if intent == "measurement" and len(incident_ids) == 1:
+        target = next(iter(incident_ids))
+        markers = list(re.finditer(r"\bRET-\d+\b", document_text.upper()))
+        if markers:
+            segments = [document_text[m.end():markers[i + 1].start() if i + 1 < len(markers) else len(document_text)]
+                        for i, m in enumerate(markers) if m.group() == target]
+            if not any(_has_typed_fact(query, segment, intent) for segment in segments):
+                return EvidenceDecision(False, intent, "requested_incident_measurement_absent")
+        else:
+            return EvidenceDecision(False, intent, "requested_incident_identifier_absent")
     if _has_typed_fact(query, document_text, intent):
         return EvidenceDecision(True, intent, "typed_value_present_not_entailed")
     return EvidenceDecision(False, intent, "requested_fact_type_absent")
