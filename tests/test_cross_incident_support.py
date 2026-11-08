@@ -9,15 +9,24 @@ class CrossIncidentSupportTests(unittest.TestCase):
         text = "RET-110 rank fusion incident. Measured P95 retrieval latency was 42 ms."
         self.assertTrue(evaluate_evidence(query, text).supported)
 
-    @unittest.expectedFailure
     def test_other_incident_measurement_must_not_support_requested_incident(self):
-        # Known B3 limitation: matching a numeric type is not claim entailment.
-        # Removing expectedFailure requires a validated fix and paired regression.
+        # Regression: another incident's numeric value must not be accepted.
         query = "What was measured P95 retrieval latency after rank fusion RET-110?"
         text = (
             "RET-110 rank fusion incident: no measured P95 latency was recorded. "
             "RET-999 rank fusion incident: measured P95 retrieval latency was 42 ms."
         )
+        self.assertFalse(evaluate_evidence(query, text).supported)
+
+    def test_other_incident_precedes_target_without_measurement(self):
+        query = "What was measured P95 retrieval latency after rank fusion RET-110?"
+        text = ("RET-999 rank fusion incident: measured P95 retrieval latency was 42 ms. "
+                "RET-110 rank fusion incident: no measured P95 latency was recorded.")
+        self.assertFalse(evaluate_evidence(query, text).supported)
+
+    def test_requested_incident_missing_entirely(self):
+        query = "What was measured P95 retrieval latency after rank fusion RET-110?"
+        text = "RET-999 rank fusion incident: measured P95 retrieval latency was 42 ms."
         self.assertFalse(evaluate_evidence(query, text).supported)
 
 
