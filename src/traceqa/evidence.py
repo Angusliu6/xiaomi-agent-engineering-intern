@@ -98,7 +98,11 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
         if markers:
             segments = [document_text[m.end():markers[i + 1].start() if i + 1 < len(markers) else len(document_text)]
                         for i, m in enumerate(markers) if m.group() == target]
-            if not any(_has_typed_fact(query, segment, intent) for segment in segments):
+            # Explicit denial of the requested measurement overrides nearby targets or SLOs.
+            # Conservative guard: it may reject mixed positive/negative prose; not entailment.
+            denied = re.compile(r"\b(?:no|not)\s+(?:measured|observed)\s+p(?:95|99)\b|\bp(?:95|99)\b.{0,45}?\b(?:not recorded|not measured|unavailable)\b", re.I)
+            if not any(_has_typed_fact(query, segment, intent) and not denied.search(segment)
+                       for segment in segments):
                 return EvidenceDecision(False, intent, "requested_incident_measurement_absent")
         else:
             return EvidenceDecision(False, intent, "requested_incident_identifier_absent")
