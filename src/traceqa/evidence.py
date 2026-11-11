@@ -109,10 +109,10 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
                 # Historical absence must not veto a later, explicit observation.
                 # Keep mixed/ambiguous sentences conservative: a measurement must
                 # be asserted in its own non-denied sentence, not merely a target.
-                sentences = re.split(r"(?<=[.!?])\\s+", segment)
+                sentences = re.split(r"(?<=[.!?])\s+", segment)
                 return any(
                     not denied.search(sentence)
-                    and re.search(r"\\b(?:measured|observed)\\b", sentence, re.I)
+                    and re.search(r"\b(?:measured|observed)\b", sentence, re.I)
                     and _has_typed_fact(query, sentence, intent)
                     for sentence in sentences
                 )
