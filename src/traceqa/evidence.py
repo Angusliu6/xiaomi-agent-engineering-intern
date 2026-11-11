@@ -101,8 +101,23 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
             # Explicit denial of the requested measurement overrides nearby targets or SLOs.
             # Conservative guard: it may reject mixed positive/negative prose; not entailment.
             denied = re.compile(r"\b(?:no|not)\s+(?:measured|observed)\s+p(?:95|99)\b|\bp(?:95|99)\b.{0,45}?\b(?:not recorded|not measured|unavailable)\b", re.I)
-            if not any(_has_typed_fact(query, segment, intent) and not denied.search(segment)
-                       for segment in segments):
+            def supported_segment(segment: str) -> bool:
+                if not _has_typed_fact(query, segment, intent):
+                    return False
+                if not denied.search(segment):
+                    return True
+                # Historical absence must not veto a later, explicit observation.
+                # Keep mixed/ambiguous sentences conservative: a measurement must
+                # be asserted in its own non-denied sentence, not merely a target.
+                sentences = re.split(r"(?<=[.!?])\\s+", segment)
+                return any(
+                    not denied.search(sentence)
+                    and re.search(r"\\b(?:measured|observed)\\b", sentence, re.I)
+                    and _has_typed_fact(query, sentence, intent)
+                    for sentence in sentences
+                )
+
+            if not any(supported_segment(segment) for segment in segments):
                 return EvidenceDecision(False, intent, "requested_incident_measurement_absent")
         else:
             return EvidenceDecision(False, intent, "requested_incident_identifier_absent")
