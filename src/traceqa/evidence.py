@@ -105,13 +105,11 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
                 if not _has_typed_fact(query, segment, intent):
                     return False
                 if not denied.search(segment):
-                    # A bare P95 number may be a target, budget or forecast.
-                    # For explicitly requested observed RET metrics require an
-                    # affirmative observation in the same sentence as the value.
-                    sentences = re.split(r"(?<=[.!?])\\s+", segment)
+                    # Bare P95 targets are not measured observations.
+                    sentences = re.split(r"(?<=[.!?])\s+", segment)
                     return any(
-                        re.search(r"\\b(?:measured|observed)\\b", sentence, re.I)
-                        and not re.search(r"\\b(?:target|slo|proposed|planned|budget|forecast)\\b", sentence, re.I)
+                        re.search(r"\b(?:measured|observed)\b", sentence, re.I)
+                        and not re.search(r"\b(?:target|slo|proposed|planned|budget|forecast)\b", sentence, re.I)
                         and _has_typed_fact(query, sentence, intent)
                         for sentence in sentences
                     )
