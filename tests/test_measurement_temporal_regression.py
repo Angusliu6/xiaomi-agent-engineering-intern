@@ -27,6 +27,21 @@ class MeasurementTemporalRegressionTests(unittest.TestCase):
         )
         self.assertFalse(evaluate_evidence(QUERY, text).supported)
 
+    def test_target_without_explicit_denial_is_not_observation(self):
+        text = "RET-110 rank fusion: the P95 latency SLO target is 42 ms."
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_unqualified_p95_number_is_not_observation(self):
+        text = "RET-110 rank fusion: P95 retrieval latency 42 ms was proposed."
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_separate_target_and_observation_remain_accepted(self):
+        text = (
+            "RET-110 rank fusion: P95 SLO target was 20 ms. "
+            "Measured P95 retrieval latency was 42 ms."
+        )
+        self.assertTrue(evaluate_evidence(QUERY, text).supported)
+
     def test_only_measured_observation_remains_accepted(self):
         text = "RET-110 rank fusion: measured P95 retrieval latency was 42 ms."
         self.assertTrue(evaluate_evidence(QUERY, text).supported)
