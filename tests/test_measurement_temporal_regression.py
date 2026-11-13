@@ -42,6 +42,21 @@ class MeasurementTemporalRegressionTests(unittest.TestCase):
         )
         self.assertTrue(evaluate_evidence(QUERY, text).supported)
 
+    def test_explicit_post_value_not_observed_is_rejected(self):
+        text = "RET-110 rank fusion: measured P95 retrieval latency 42 ms was not observed."
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_explicit_post_value_not_measured_is_rejected(self):
+        text = "RET-110 rank fusion: P95 retrieval latency 42 ms was not measured."
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_post_value_negation_then_later_observation_is_accepted(self):
+        text = (
+            "RET-110 rank fusion: P95 retrieval latency 42 ms was not observed. "
+            "After instrumentation, measured P95 retrieval latency was 38 ms."
+        )
+        self.assertTrue(evaluate_evidence(QUERY, text).supported)
+
     def test_only_measured_observation_remains_accepted(self):
         text = "RET-110 rank fusion: measured P95 retrieval latency was 42 ms."
         self.assertTrue(evaluate_evidence(QUERY, text).supported)
