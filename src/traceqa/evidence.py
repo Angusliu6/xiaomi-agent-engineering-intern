@@ -100,7 +100,7 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
                         for i, m in enumerate(markers) if m.group() == target]
             # Explicit denial of the requested measurement overrides nearby targets or SLOs.
             # Conservative guard: it may reject mixed positive/negative prose; not entailment.
-            denied = re.compile(r"\b(?:no|not)\s+(?:measured|observed)\s+p(?:95|99)\b|\bp(?:95|99)\b.{0,45}?\b(?:not recorded|not measured|unavailable)\b", re.I)
+            denied = re.compile(r"\b(?:no|not)\s+(?:measured|observed)\s+p(?:95|99)\b|\bp(?:95|99)\b.{0,70}?\b(?:not\s+(?:recorded|measured|observed)|unavailable)\b", re.I)
             def supported_segment(segment: str) -> bool:
                 if not _has_typed_fact(query, segment, intent):
                     return False
