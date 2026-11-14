@@ -104,24 +104,22 @@ def evaluate_evidence(query: str, document_text: str) -> EvidenceDecision:
             def supported_segment(segment: str) -> bool:
                 if not _has_typed_fact(query, segment, intent):
                     return False
-                if not denied.search(segment):
-                    # Bare P95 targets are not measured observations.
-                    sentences = re.split(r"(?<=[.!?])\s+", segment)
-                    return any(
-                        re.search(r"\b(?:measured|observed)\b", sentence, re.I)
-                        and not re.search(r"\b(?:target|slo|proposed|planned|budget|forecast)\b", sentence, re.I)
-                        and _has_typed_fact(query, sentence, intent)
-                        for sentence in sentences
+                # A measured value of another metric must not license a nearby
+                # P95 target. Keep observation, percentile and value in one
+                # comma/semicolon-delimited claim clause.
+                def affirmative_clause(clause: str) -> bool:
+                    return (
+                        not denied.search(clause)
+                        and not re.search(r"\b(?:target|slo|proposed|planned|budget|forecast)\b", clause, re.I)
+                        and re.search(r"\b(?:measured|observed)\b", clause, re.I)
+                        and _has_typed_fact(query, clause, intent)
                     )
-                # Historical absence must not veto a later, explicit observation.
-                # Keep mixed/ambiguous sentences conservative: a measurement must
-                # be asserted in its own non-denied sentence, not merely a target.
+
                 sentences = re.split(r"(?<=[.!?])\s+", segment)
                 return any(
-                    not denied.search(sentence)
-                    and re.search(r"\b(?:measured|observed)\b", sentence, re.I)
-                    and _has_typed_fact(query, sentence, intent)
+                    affirmative_clause(clause)
                     for sentence in sentences
+                    for clause in re.split(r"[,;]\s*", sentence)
                 )
 
             if not any(supported_segment(segment) for segment in segments):
