@@ -19,3 +19,19 @@ jobs:
       - run: python -m traceqa eval --cases data/stress_hard_negative.jsonl --variant b0 --out reports/stress-b0.json
       - run: python -m traceqa eval --cases data/stress_hard_negative.jsonl --variant b2 --out reports/stress-b2.json
       - run: python -m traceqa compare reports/stress-b0.json reports/stress-b2.json
+      - run: python -m traceqa eval --cases data/stress_hard_negative.jsonl --variant b3 --out reports/stress-b3.json
+      - run: python -m traceqa compare reports/stress-b2.json reports/stress-b3.json
+
+  deck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix slides --ignore-scripts --no-audit --no-fund
+      - run: node slides/build_slides.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: traceqa-training-deck
+          path: slides/TRACE-QA-Agent-Engineering-Course.pptx

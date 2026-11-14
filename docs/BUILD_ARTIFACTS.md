@@ -28,3 +28,7 @@ Chinese font recommended: Noto Sans CJK SC. Output `docs/TRACE-QA-完整学习�
 - Any change to `data/` must regenerate versioned JSON sample outputs (`examples/b0_sample.json`, `examples/b1_sample.json`, `examples/b2_sample.json`) and verify data/corpus hashes before comparison.
 - Rebuild PPTX/PDF from current sources; inspect PDF/slide rendering for truncation, unreadable Chinese, tables crossing margins, or broken URLs.
 - GitHub remote `main` commit SHA and CI status must be checked after pushing, not assumed.
+
+## 2026-11-05 研究分支说明
+
+`slides/build_slides.js` 已添加 Slide 32–33（Typed Evidence Gate / 科研限制），从当前源码构建应产生 **33 页**。仓库历史追踪的 `slides/TRACE-QA-Agent-Engineering-Course.pptx` 仍是旧版 31 页二进制发布文件，**不得混淆**。PR 的 GitHub Actions 将生成一个新的 PPTX Artifact，待审查通过后再更新 tracked binary 或发布正式 Release，避免出现源代码与二进制成果不一致。

@@ -129,3 +129,20 @@ These are **open tasks**, not features reported as completed.
 Designed as an independent learning exercise from a public job description. Not affiliated with or endorsed by Xiaomi. Synthetic corpus is newly authored for this repository; no employer data or private repository content is included. Technical inspiration from earlier personal Kaggle / RAG work is described in `docs/LEARNING_PATH.md` without asserting personal authorship of automatically generated competition changes.
 
 License: MIT (see LICENSE). Feedback and experiments welcome.
+
+## Research iteration in review: B3 typed-fact candidate gate
+
+**Draft PR [#6](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/pull/6); main/B2 remains Champion.**
+
+B2's lexical gate can accept documents that share the query's topic but do not give the requested exact metric/person/time/configuration. B3 is an **opt-in heuristic** that checks for the presence of certain requested value types; it does *not* establish entailment or true answer correctness.
+
+```bash
+python -m traceqa eval --cases data/stress_hard_negative.jsonl --variant b2 --out reports/b2.json
+python -m traceqa eval --cases data/stress_hard_negative.jsonl --variant b3 --out reports/b3.json
+python -m traceqa compare reports/b2.json reports/b3.json
+python -m traceqa ask "What was measured P95 retrieval latency after RRF rank fusion RET-110?" --evidence-policy typed
+```
+
+On the **known authored development stress fixture only**, the preliminary B2 vs B3 diagnostic moved the 10 no-answer cases from 4 correct refusals to 10; both gates still accepted just 4 of 6 answerable cases, and mean search calls increased (1.75→2.50). These are **not held-out gains or task success rates**, and B3 is not automatically a better production policy. See [experiment report](docs/EXPERIMENT_20261105_TYPED_EVIDENCE_GATE.md), [iteration state](docs/ITERATION_STATE.md), and [Lab 08](labs/LAB_08_TYPED_EVIDENCE_GATE.md). Keep any résumé claims scoped to *offline development-set candidate acceptance*.
+
+Experiment: `TRACEQA-20261105-EVIDENCE-TYPE-001`.
