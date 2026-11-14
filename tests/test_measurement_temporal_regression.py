@@ -57,6 +57,27 @@ class MeasurementTemporalRegressionTests(unittest.TestCase):
         )
         self.assertTrue(evaluate_evidence(QUERY, text).supported)
 
+    def test_measured_throughput_does_not_validate_p95_target_in_same_sentence(self):
+        text = (
+            "RET-110 rank fusion: measured throughput was 20 requests/s; "
+            "P95 latency SLO target was 42 ms."
+        )
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_measured_throughput_does_not_validate_p95_target_after_comma(self):
+        text = (
+            "RET-110 rank fusion: measured throughput was 20 requests/s, "
+            "P95 latency target was 42 ms."
+        )
+        self.assertFalse(evaluate_evidence(QUERY, text).supported)
+
+    def test_separate_measured_p95_clause_is_still_accepted(self):
+        text = (
+            "RET-110 rank fusion: measured throughput was 20 requests/s; "
+            "measured P95 retrieval latency was 42 ms."
+        )
+        self.assertTrue(evaluate_evidence(QUERY, text).supported)
+
     def test_only_measured_observation_remains_accepted(self):
         text = "RET-110 rank fusion: measured P95 retrieval latency was 42 ms."
         self.assertTrue(evaluate_evidence(QUERY, text).supported)
