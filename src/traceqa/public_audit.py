@@ -56,7 +56,7 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
         if not isinstance(case.get("query"), str) or not case["query"].strip():
             errors.append(f"case:{cid}:query")
         reviewers = case.get("reviewer_ids")
-        if case.get("review_status") != "human_reviewed" or not isinstance(reviewers, list) or len(reviewers) < 2 or any(not isinstance(r, str) or not r.strip() for r in reviewers) or len(set(reviewers)) < 2:
+        if case.get("review_status") != "human_reviewed" or not isinstance(reviewers, list) or len(reviewers) < 2 or any(not isinstance(r, str) or not r.strip() for r in reviewers) or len({r for r in reviewers if isinstance(r, str)}) < 2:
             errors.append(f"case:{cid}:independent_review_missing")
         answerable = case.get("answerable")
         gold = case.get("gold_docs")
