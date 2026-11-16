@@ -26,6 +26,8 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
     supporting_spans: [{doc_id, start, end, quote}], exact offsets into text.
     Unanswerable cases must have no gold docs or supporting spans.
     """
+    if not isinstance(cases, list) or not isinstance(documents, dict):
+        return {"ready": False, "cases": 0, "documents": 0, "errors": ["invalid_container_types"]}
     errors: list[str] = []
     if not cases:
         errors.append("empty_cases")
@@ -62,7 +64,7 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
         if not isinstance(answerable, bool) or not isinstance(gold, list) or not isinstance(spans, list):
             errors.append(f"case:{cid}:invalid_labels")
             continue
-        if len(gold) != len(set(gold)) or any(not isinstance(d, str) or d not in documents for d in gold):
+        if any(not isinstance(d, str) or d not in documents for d in gold) or len({d for d in gold if isinstance(d, str)}) != len(gold):
             errors.append(f"case:{cid}:invalid_gold_docs")
         if answerable != bool(gold) or answerable != bool(spans):
             errors.append(f"case:{cid}:answerability_span_mismatch")
@@ -73,7 +75,7 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
                 continue
             doc_id = span.get("doc_id")
             start, end, quote = span.get("start"), span.get("end"), span.get("quote")
-            doc = documents.get(doc_id)
+            doc = documents.get(doc_id) if isinstance(doc_id, str) else None
             if (not isinstance(doc, dict) or not isinstance(doc.get("text"), str) or
                 not isinstance(start, int) or isinstance(start, bool) or
                 not isinstance(end, int) or isinstance(end, bool) or
@@ -82,6 +84,6 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
                 errors.append(f"case:{cid}:span:{j}:offset_or_quote_mismatch")
             else:
                 span_docs.add(doc_id)
-        if span_docs != set(gold):
+        if span_docs != {d for d in gold if isinstance(d, str)}:
             errors.append(f"case:{cid}:gold_span_coverage_mismatch")
     return {"ready": not errors, "cases": len(cases), "documents": len(documents), "errors": errors}
