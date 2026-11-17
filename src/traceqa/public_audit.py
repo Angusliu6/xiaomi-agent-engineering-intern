@@ -5,16 +5,33 @@ This is a data quality gate, NOT an evaluation result. No corpus is bundled.
 from __future__ import annotations
 
 from urllib.parse import urlparse
+from ipaddress import ip_address
 
 
 def _public_url(value: object) -> bool:
+    """Syntax-only public HTTPS preflight; not a license or DNS verification."""
     if not isinstance(value, str):
         return False
-    u = urlparse(value)
-    return u.scheme == "https" and bool(u.hostname) and not (
-        u.hostname in {"localhost", "127.0.0.1"} or
-        u.hostname.endswith(".local")
-    ) and not u.username and not u.password
+    try:
+        u = urlparse(value)
+        host = (u.hostname or "").rstrip(".").lower()
+        # Literal private, loopback, link-local and documentation IPs cannot
+        # serve as independently verifiable public source/permission URLs.
+        try:
+            literal = ip_address(host)
+        except ValueError:
+            literal = None
+        return (
+            u.scheme == "https" and bool(host) and "." in host
+            and host != "localhost" and not host.endswith(".localhost")
+            and not host.endswith(".local")
+            and (literal is None or literal.is_global)
+            and u.port != 0 and not u.username and not u.password
+            and not any(ch.isspace() for ch in value)
+        )
+    except ValueError:
+        # urlparse().hostname / .port can raise for malformed IPv6/ports.
+        return False
 
 
 def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
