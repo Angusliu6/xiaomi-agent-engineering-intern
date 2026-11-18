@@ -32,6 +32,19 @@ class PublicAuditTests(unittest.TestCase):
         self.assertTrue(any("license_unverified" in e for e in result["errors"]))
         self.assertTrue(any("independent_review_missing" in e for e in result["errors"]))
 
+    def test_reviewer_identity_aliases_are_not_independent(self):
+        for reviewers in (["reviewer-a", " Reviewer-A "],
+                          ["REVIEWER-A", "reviewer-a"]):
+            with self.subTest(reviewers=reviewers):
+                c = dict(CASE, reviewer_ids=reviewers)
+                result = audit_public_cases([c], DOCS)
+                self.assertFalse(result["ready"])
+                self.assertIn("case:c1:independent_review_missing", result["errors"])
+
+    def test_distinct_reviewer_ids_remain_eligible(self):
+        c = dict(CASE, reviewer_ids=[" reviewer-a ", "reviewer-b"])
+        self.assertTrue(audit_public_cases([c], DOCS)["ready"])
+
     def test_rejects_gold_without_support(self):
         c = dict(CASE, supporting_spans=[])
         self.assertFalse(audit_public_cases([c], DOCS)["ready"])
