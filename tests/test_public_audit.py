@@ -45,6 +45,30 @@ class PublicAuditTests(unittest.TestCase):
         c = dict(CASE, reviewer_ids=[" reviewer-a ", "reviewer-b"])
         self.assertTrue(audit_public_cases([c], DOCS)["ready"])
 
+    def test_sealed_holdout_rejects_cross_split_query_and_document(self):
+        dev = dict(CASE, id="dev", split="dev")
+        holdout = dict(CASE, id="holdout", split="holdout")
+        result = audit_public_cases([dev, holdout], DOCS)
+        self.assertFalse(result["ready"])
+        self.assertIn("case:holdout:cross_split_query_leakage", result["errors"])
+        self.assertIn("case:holdout:cross_split_gold_doc_leakage", result["errors"])
+
+    def test_sealed_holdout_accepts_disjoint_cases(self):
+        dev = dict(CASE, id="dev", split="dev")
+        other_text = "Measured P99 was 88 ms."
+        docs = dict(DOCS, d2=dict(DOCS["d1"], text=other_text))
+        holdout = dict(CASE, id="holdout", split="holdout",
+                       query="What was measured P99?", gold_docs=["d2"],
+                       supporting_spans=[{"doc_id": "d2", "start": 0,
+                                          "end": len(other_text), "quote": other_text}])
+        self.assertTrue(audit_public_cases([dev, holdout], docs)["ready"])
+
+    def test_sealed_holdout_requires_complete_split_labels(self):
+        dev = dict(CASE, id="dev", split="dev")
+        holdout = dict(CASE, id="holdout", query="Different question?")
+        result = audit_public_cases([dev, holdout], DOCS)
+        self.assertIn("case:holdout:invalid_split", result["errors"])
+
     def test_rejects_gold_without_support(self):
         c = dict(CASE, supporting_spans=[])
         self.assertFalse(audit_public_cases([c], DOCS)["ready"])
