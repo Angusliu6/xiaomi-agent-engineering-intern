@@ -60,6 +60,11 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
             errors.append(f"document:{doc_id}:source_url")
         if not _public_url(doc.get("license_url")) or not isinstance(doc.get("license_id"), str) or not doc["license_id"].strip():
             errors.append(f"document:{doc_id}:license_unverified")
+    # A declared holdout must not share queries or gold documents with development.
+    # Unlabelled legacy synthetic fixtures retain their existing behavior.
+    split_mode = any(isinstance(c, dict) and "split" in c for c in cases)
+    seen_queries: dict[str, str] = {}
+    seen_gold_docs: dict[str, str] = {}
     seen: set[str] = set()
     for index, case in enumerate(cases):
         if not isinstance(case, dict):
@@ -75,6 +80,24 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
         reviewers = case.get("reviewer_ids")
         if case.get("review_status") != "human_reviewed" or not isinstance(reviewers, list) or len(reviewers) < 2 or any(not isinstance(r, str) or not r.strip() for r in reviewers) or len({r.strip().casefold() for r in reviewers if isinstance(r, str)}) < 2:
             errors.append(f"case:{cid}:independent_review_missing")
+        if split_mode:
+            split = case.get("split")
+            if split not in ("dev", "holdout"):
+                errors.append(f"case:{cid}:invalid_split")
+            else:
+                query = case.get("query")
+                if isinstance(query, str) and query.strip():
+                    key = " ".join(query.split()).casefold()
+                    if key in seen_queries and seen_queries[key] != split:
+                        errors.append(f"case:{cid}:cross_split_query_leakage")
+                    seen_queries[key] = split
+                gold_candidate = case.get("gold_docs")
+                if isinstance(gold_candidate, list):
+                    for doc_id in gold_candidate:
+                        if isinstance(doc_id, str):
+                            if doc_id in seen_gold_docs and seen_gold_docs[doc_id] != split:
+                                errors.append(f"case:{cid}:cross_split_gold_doc_leakage")
+                            seen_gold_docs[doc_id] = split
         answerable = case.get("answerable")
         gold = case.get("gold_docs")
         spans = case.get("supporting_spans")
