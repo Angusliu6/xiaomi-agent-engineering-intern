@@ -65,6 +65,7 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
     split_mode = any(isinstance(c, dict) and "split" in c for c in cases)
     seen_queries: dict[str, str] = {}
     seen_gold_docs: dict[str, str] = {}
+    seen_gold_texts: dict[str, str] = {}
     seen: set[str] = set()
     for index, case in enumerate(cases):
         if not isinstance(case, dict):
@@ -98,6 +99,13 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
                             if doc_id in seen_gold_docs and seen_gold_docs[doc_id] != split:
                                 errors.append(f"case:{cid}:cross_split_gold_doc_leakage")
                             seen_gold_docs[doc_id] = split
+                            doc = documents.get(doc_id)
+                            if isinstance(doc, dict) and isinstance(doc.get("text"), str):
+                                # Different IDs cannot disguise identical gold evidence.
+                                text_key = doc["text"]
+                                if text_key in seen_gold_texts and seen_gold_texts[text_key] != split:
+                                    errors.append(f"case:{cid}:cross_split_gold_text_leakage")
+                                seen_gold_texts[text_key] = split
         answerable = case.get("answerable")
         gold = case.get("gold_docs")
         spans = case.get("supporting_spans")
