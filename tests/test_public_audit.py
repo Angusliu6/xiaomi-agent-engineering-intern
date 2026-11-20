@@ -63,6 +63,28 @@ class PublicAuditTests(unittest.TestCase):
                                           "end": len(other_text), "quote": other_text}])
         self.assertTrue(audit_public_cases([dev, holdout], docs)["ready"])
 
+    def test_sealed_holdout_rejects_same_text_under_different_doc_ids(self):
+        dev = dict(CASE, id="dev", split="dev")
+        docs = dict(DOCS, d2=dict(DOCS["d1"]))
+        holdout = dict(CASE, id="holdout", split="holdout",
+                       query="Report the observed retrieval latency.",
+                       gold_docs=["d2"],
+                       supporting_spans=[{"doc_id": "d2", "start": 0,
+                                          "end": len(TEXT), "quote": TEXT}])
+        result = audit_public_cases([dev, holdout], docs)
+        self.assertFalse(result["ready"])
+        self.assertIn("case:holdout:cross_split_gold_text_leakage", result["errors"])
+
+    def test_sealed_holdout_same_text_within_dev_is_allowed(self):
+        dev1 = dict(CASE, id="dev1", split="dev")
+        docs = dict(DOCS, d2=dict(DOCS["d1"]))
+        dev2 = dict(CASE, id="dev2", split="dev",
+                    query="Report the observed retrieval latency.",
+                    gold_docs=["d2"],
+                    supporting_spans=[{"doc_id": "d2", "start": 0,
+                                       "end": len(TEXT), "quote": TEXT}])
+        self.assertTrue(audit_public_cases([dev1, dev2], docs)["ready"])
+
     def test_sealed_holdout_requires_complete_split_labels(self):
         dev = dict(CASE, id="dev", split="dev")
         holdout = dict(CASE, id="holdout", query="Different question?")
