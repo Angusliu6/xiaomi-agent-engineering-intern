@@ -112,3 +112,16 @@
 6. 如果你打算引入 LLM-as-a-Judge，如何建立人工审核与盲验流程，防止评分器奖励更流畅但无依据的答案？
 
 **执行证据**：完整复现实验及破坏标签反例参考 `labs/LAB_07_AUDIT_AND_HARD_NEGATIVES.md`；该实验是学习材料，不允许看到 gold 后硬编码特殊判断。
+
+## Part 8 · Evidence Sufficiency（TRACEQA-20261105-EVIDENCE-TYPE-001）
+
+1. 为什么一个包含 `p95`、`RRF` 关键词的文档，仍然可能不支持“真实生产 P95 延迟是多少”？
+2. B2 在 10 道不可回答题上拒答 4 道，B3 拒答 10 道；如果另有 6 道可回答题，为什么必须同时检查 B3 的候选接受率？
+3. 在文档里任意添加一个 `P95 = 1 ms` 就会让某些类型门通过。这说明 Typed Gate 最本质的限制是什么？
+4. 10 道题都来自开发者已见过的合成集，怎样设计新的不泄漏 Holdout 来验证？
+5. B3 多消耗 0.75 次工具调用/题，若接入付费 LLM 和 API，每次调用成本的权衡应如何评估？
+6. `tool_failed`、`planner_error`、`budget_exhausted_without_support` 和 `candidate_evidence_only` 为什么不能都归入“无答案”？
+7. Checkpoint 是用 lexical 策略创建的，恢复时改成 typed，应如何处理？为什么？
+8. `configured.` 被旧 tokenizer 当作整体 token，属于哪类 bug？如何编写回归测试？
+
+**动手关卡**：完成 [LAB 08](../labs/LAB_08_TYPED_EVIDENCE_GATE.md)。不要把该实验描述为模型完成了自然语言蕴含推理。

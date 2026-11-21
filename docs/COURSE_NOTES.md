@@ -64,3 +64,14 @@
 - 推荐：`ruff`、`mypy`、`coverage`、`pre-commit`，用于工程质量控制。
 - 进阶：LangGraph、MCP Python SDK、SentenceTransformers（真实 Embedding）、FAISS/Chroma、Ragas、LangSmith/Arize（需检查隐私/成本）。
 - 可选训练：Transformers、TRL、PEFT、Accelerate。只在数据标注、伦理与机器资源允许后做。
+
+## C7 · Evidence Sufficiency 与 Typed-fact 对照实验（本轮新增）
+
+**课程目标**：区分 Document Relevance（是否涉及问题主题）、Requested Fact Presence（是否具备目标值类型）和 Claim-level Entailment（证据是否真的支持答案）。
+
+**配套材料**：[Lab 08](../labs/LAB_08_TYPED_EVIDENCE_GATE.md)、[实验报告](EXPERIMENT_20261105_TYPED_EVIDENCE_GATE.md)、`src/traceqa/evidence.py`。
+
+- **L1 能解释**：为什么高 lexical score、甚至同类型数字出现，也不能保证那是该问题要求的事实。
+- **L2 能实现**：明确拒答原因、事实类型启发式、B2/B3 对照和 paired abstention metric。
+- **L3 能证伪**：主动构造数值错配、英文改写、中文问题、同文档多个事故的失败用例，并指出规则何时应被 NLI/人工标注替代。
+- **晋级门槛**：展示 2 个真实反例 + 1 个真实通过的支持片段 + 1 个实验中的回归/成本说明。只有作者合成题不允许作出泛化结论。

@@ -38,3 +38,11 @@
 - `planner_error` 是独立失败状态；外部 LLM 请求拒绝 URL fragment/用户信息/redirect，并限制响应。此处只有 Mock 测试，没有真实服务商联调。
 - PPT 已扩至 31 页并统一优先级。PDF 手册新增独立审核章节。
 - 详细审计及未解决的阻断项见 [AUDIT_2026-11-03.md](AUDIT_2026-11-03.md)。
+
+## 2026-11-05 B3 研究分支验证信息（TRACEQA-20261105-EVIDENCE-TYPE-001）
+
+- 研究 PR：[ #6 ](https://github.com/Angusliu6/xiaomi-agent-engineering-intern/pull/6)；以 PR 最新 CI 结论为准。主分支 Champion 保持不变。
+- 在本地对与仓库同源的 12 篇合成故障文档和相同词法检索/规则计划策略重放 B2/B3，开发压力集拒答从 4/10 至 10/10；可回答题候选接受仍是 4/6；平均工具调用从 1.75 至 2.50。CI 自动化同样执行这一数据集上的测试和 `compare`，但**不等于独立验证泛化**。
+- 增加 `candidate_acceptance_answerable` 和 `paired_abstention`，以避免只看拒答率得出“全部拒答即胜利”的假结论。
+- `typed` 策略只是词法+事实类型存在检查；它不能证明被接受的数值或人名真的回答当前查询，更不能防止所有敏感信息风险。
+- [Iteration State](ITERATION_STATE.md)、[实验记录](EXPERIMENT_20261105_TYPED_EVIDENCE_GATE.md) 与 [Lab 08](../labs/LAB_08_TYPED_EVIDENCE_GATE.md) 均提供可复现证据；训练模型、密集向量与真实工具互操作仍属未来目标。
