@@ -66,6 +66,7 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
     seen_queries: dict[str, str] = {}
     seen_gold_docs: dict[str, str] = {}
     seen_gold_texts: dict[str, str] = {}
+    seen_source_urls: dict[str, str] = {}
     seen: set[str] = set()
     for index, case in enumerate(cases):
         if not isinstance(case, dict):
@@ -106,6 +107,13 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
                                 if text_key in seen_gold_texts and seen_gold_texts[text_key] != split:
                                     errors.append(f"case:{cid}:cross_split_gold_text_leakage")
                                 seen_gold_texts[text_key] = split
+                            if isinstance(doc, dict) and isinstance(doc.get("source_url"), str):
+                                # The same source report cannot be independently held out
+                                # merely by changing its document ID or extracted text.
+                                source_key = doc["source_url"].strip()
+                                if source_key in seen_source_urls and seen_source_urls[source_key] != split:
+                                    errors.append(f"case:{cid}:cross_split_source_url_leakage")
+                                seen_source_urls[source_key] = split
         answerable = case.get("answerable")
         gold = case.get("gold_docs")
         spans = case.get("supporting_spans")
