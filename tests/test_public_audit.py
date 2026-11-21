@@ -56,7 +56,8 @@ class PublicAuditTests(unittest.TestCase):
     def test_sealed_holdout_accepts_disjoint_cases(self):
         dev = dict(CASE, id="dev", split="dev")
         other_text = "Measured P99 was 88 ms."
-        docs = dict(DOCS, d2=dict(DOCS["d1"], text=other_text))
+        docs = dict(DOCS, d2=dict(DOCS["d1"], text=other_text,
+                                      source_url="https://example.org/independent-report"))
         holdout = dict(CASE, id="holdout", split="holdout",
                        query="What was measured P99?", gold_docs=["d2"],
                        supporting_spans=[{"doc_id": "d2", "start": 0,
@@ -74,6 +75,20 @@ class PublicAuditTests(unittest.TestCase):
         result = audit_public_cases([dev, holdout], docs)
         self.assertFalse(result["ready"])
         self.assertIn("case:holdout:cross_split_gold_text_leakage", result["errors"])
+
+    def test_sealed_holdout_rejects_same_source_with_different_text(self):
+        dev = dict(CASE, id="dev", split="dev")
+        other_text = "Observed timeout count was 3."
+        docs = dict(DOCS, d2=dict(DOCS["d1"], text=other_text))
+        holdout = dict(CASE, id="holdout", split="holdout",
+                       query="How many timeouts were observed?",
+                       gold_docs=["d2"],
+                       supporting_spans=[{"doc_id": "d2", "start": 0,
+                                          "end": len(other_text), "quote": other_text}])
+        result = audit_public_cases([dev, holdout], docs)
+        self.assertFalse(result["ready"])
+        self.assertIn("case:holdout:cross_split_source_url_leakage", result["errors"])
+        self.assertNotIn("case:holdout:cross_split_gold_text_leakage", result["errors"])
 
     def test_sealed_holdout_same_text_within_dev_is_allowed(self):
         dev1 = dict(CASE, id="dev1", split="dev")
