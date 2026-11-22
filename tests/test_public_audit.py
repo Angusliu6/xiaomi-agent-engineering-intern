@@ -106,6 +106,33 @@ class PublicAuditTests(unittest.TestCase):
         result = audit_public_cases([dev, holdout], DOCS)
         self.assertIn("case:holdout:invalid_split", result["errors"])
 
+    def test_sealed_mode_rejects_legacy_unpartitioned_fixture(self):
+        self.assertTrue(audit_public_cases([CASE], DOCS)["ready"])
+        result = audit_public_cases([CASE], DOCS, require_holdout=True)
+        self.assertFalse(result["ready"])
+        self.assertIn("missing_dev_or_holdout_split", result["errors"])
+        self.assertIn("case:c1:invalid_split", result["errors"])
+
+    def test_sealed_mode_rejects_only_dev_or_only_holdout(self):
+        for split in ("dev", "holdout"):
+            with self.subTest(split=split):
+                case = dict(CASE, split=split)
+                result = audit_public_cases([case], DOCS, require_holdout=True)
+                self.assertFalse(result["ready"])
+                self.assertIn("missing_dev_or_holdout_split", result["errors"])
+
+    def test_sealed_mode_accepts_disjoint_dev_and_holdout(self):
+        dev = dict(CASE, id="dev", split="dev")
+        text = "Observed timeout count was 3."
+        docs = dict(DOCS, d2=dict(DOCS["d1"], text=text,
+                                   source_url="https://example.org/other-report"))
+        holdout = dict(CASE, id="holdout", split="holdout",
+                       query="How many timeouts?", gold_docs=["d2"],
+                       supporting_spans=[{"doc_id": "d2", "start": 0,
+                                          "end": len(text), "quote": text}])
+        self.assertTrue(audit_public_cases([dev, holdout], docs,
+                                            require_holdout=True)["ready"])
+
     def test_rejects_gold_without_support(self):
         c = dict(CASE, supporting_spans=[])
         self.assertFalse(audit_public_cases([c], DOCS)["ready"])
