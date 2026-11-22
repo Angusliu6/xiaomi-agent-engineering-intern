@@ -34,7 +34,7 @@ def _public_url(value: object) -> bool:
         return False
 
 
-def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
+def audit_public_cases(cases: list[dict], documents: dict[str, dict], *, require_holdout: bool = False) -> dict:
     """Validate independent public evidence labels without scoring a model.
 
     Document schema: id -> {text, source_url, license_url, license_id}.
@@ -63,6 +63,13 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict]) -> dict:
     # A declared holdout must not share queries or gold documents with development.
     # Unlabelled legacy synthetic fixtures retain their existing behavior.
     split_mode = any(isinstance(c, dict) and "split" in c for c in cases)
+    if require_holdout:
+        # A legacy synthetic fixture must never silently qualify as sealed evaluation.
+        counts = {label: sum(isinstance(c, dict) and c.get("split") == label for c in cases)
+                  for label in ("dev", "holdout")}
+        if not counts["dev"] or not counts["holdout"]:
+            errors.append("missing_dev_or_holdout_split")
+        split_mode = True
     seen_queries: dict[str, str] = {}
     seen_gold_docs: dict[str, str] = {}
     seen_gold_texts: dict[str, str] = {}
