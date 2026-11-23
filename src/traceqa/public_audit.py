@@ -120,8 +120,9 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict], *, require
                                 source = urlparse(doc["source_url"].strip())
                                 # URL fragments are client-side anchors, not different source reports.
                                 # Hostnames and schemes are case-insensitive; keep path/query intact.
-                                source_key = (source.scheme.lower(), (source.hostname or "").lower().rstrip("."),
-                                              source.port or 443, source.path or "/", source.query)
+                                source_key = ((source.scheme.lower(), (source.hostname or "").lower().rstrip("."),
+                                               source.port or 443, source.path or "/", source.query)
+                                              if _public_url(doc["source_url"]) else doc["source_url"].strip())
                                 if source_key in seen_source_urls and seen_source_urls[source_key] != split:
                                     errors.append(f"case:{cid}:cross_split_source_url_leakage")
                                 seen_source_urls[source_key] = split
