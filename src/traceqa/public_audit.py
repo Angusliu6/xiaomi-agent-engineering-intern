@@ -117,12 +117,12 @@ def audit_public_cases(cases: list[dict], documents: dict[str, dict], *, require
                             if isinstance(doc, dict) and isinstance(doc.get("source_url"), str):
                                 # The same source report cannot be independently held out
                                 # merely by changing its document ID or extracted text.
-                                source = urlparse(doc["source_url"].strip())
+                                source = urlparse(doc["source_url"].strip()) if _public_url(doc["source_url"]) else None
                                 # URL fragments are client-side anchors, not different source reports.
                                 # Hostnames and schemes are case-insensitive; keep path/query intact.
                                 source_key = ((source.scheme.lower(), (source.hostname or "").lower().rstrip("."),
                                                source.port or 443, source.path or "/", source.query)
-                                              if _public_url(doc["source_url"]) else doc["source_url"].strip())
+                                              if source is not None else doc["source_url"].strip())
                                 if source_key in seen_source_urls and seen_source_urls[source_key] != split:
                                     errors.append(f"case:{cid}:cross_split_source_url_leakage")
                                 seen_source_urls[source_key] = split
