@@ -90,6 +90,22 @@ class PublicAuditTests(unittest.TestCase):
         self.assertIn("case:holdout:cross_split_source_url_leakage", result["errors"])
         self.assertNotIn("case:holdout:cross_split_gold_text_leakage", result["errors"])
 
+    def test_sealed_holdout_rejects_source_url_fragment_and_host_alias(self):
+        dev = dict(CASE, id="dev", split="dev")
+        other_text = "Observed timeout count was 3."
+        docs = copy.deepcopy(DOCS)
+        docs["d1"]["source_url"] = "https://EXAMPLE.org/report#section-a"
+        docs["d2"] = dict(DOCS["d1"], text=other_text,
+                          source_url="https://example.org/report#section-b")
+        holdout = dict(CASE, id="holdout", split="holdout",
+                       query="How many timeouts were observed?",
+                       gold_docs=["d2"],
+                       supporting_spans=[{"doc_id": "d2", "start": 0,
+                                          "end": len(other_text), "quote": other_text}])
+        result = audit_public_cases([dev, holdout], docs, require_holdout=True)
+        self.assertFalse(result["ready"])
+        self.assertIn("case:holdout:cross_split_source_url_leakage", result["errors"])
+
     def test_sealed_holdout_same_text_within_dev_is_allowed(self):
         dev1 = dict(CASE, id="dev1", split="dev")
         docs = dict(DOCS, d2=dict(DOCS["d1"]))
