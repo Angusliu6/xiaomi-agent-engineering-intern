@@ -106,6 +106,15 @@ class PublicAuditTests(unittest.TestCase):
         self.assertFalse(result["ready"])
         self.assertIn("case:holdout:cross_split_source_url_leakage", result["errors"])
 
+    def test_invalid_source_url_port_fails_closed_without_exception(self):
+        docs = copy.deepcopy(DOCS)
+        docs["d1"]["source_url"] = "https://example.org:not-a-port/report"
+        dev = dict(CASE, id="dev", split="dev")
+        holdout = dict(CASE, id="holdout", split="holdout")
+        result = audit_public_cases([dev, holdout], docs, require_holdout=True)
+        self.assertFalse(result["ready"])
+        self.assertIn("document:d1:source_url", result["errors"])
+
     def test_sealed_holdout_same_text_within_dev_is_allowed(self):
         dev1 = dict(CASE, id="dev1", split="dev")
         docs = dict(DOCS, d2=dict(DOCS["d1"]))
